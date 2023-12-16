@@ -111,7 +111,7 @@ private extension KeychainStorageTests{
     var someTag: String{ "someTag" }
     
     func makeSUT(storeId: String = "test.keychain.storage", tagToDelete: String? = nil) -> KeychainStorage{
-        let sut = KeychainStorage(storeId: storeId)
+        let sut = KeychainStorage(storeId: storeId, protection: .whenUnlocked, itemClass: kSecClassInternetPassword)
         let someTag = tagToDelete ?? someTag
         addTeardownBlock {
             sut.deleteItem(withTag: someTag)

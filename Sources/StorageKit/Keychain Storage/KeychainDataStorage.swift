@@ -1,32 +1,69 @@
 //
-//  KeychainStorage.swift
+//  KeychainDataStorage.swift
 //  StorageKit
 //
 //  Created by Lorenzo Limoli on 16/11/22.
 //
 
 import Foundation
+import LocalAuthentication
 
-open class KeychainStorage: Storage{
+open class KeychainDataStorage: Storage{
+    public typealias AccessControl = SecAccessControlCreateFlags
+    
     public let storeId: String
-    public let protected: Bool
+    public let protection: KeychainStorageProtection
+    public let accessControl: AccessControl
+    public let policy: LAPolicy?
+    public var reuseContext = false
     public var promptMessage: String?
     
-    public init(storeId: String, protected: Bool = false, promptMessage: String? = nil) {
+    private let itemClass: CFString
+    private var _context: LAContext?
+    private var context: LAContext {
+        if !reuseContext {
+            _context = nil
+            return LAContext()
+        }
+        
+        if let _context { return _context }
+        
+        let context = LAContext()
+        _context = context
+        return context
+    }
+    
+    public init(
+        storeId: String,
+        protection: KeychainStorageProtection,
+        accessControl: AccessControl = [],
+        policy: LAPolicy? = nil,
+        itemClass: CFString = kSecClassGenericPassword
+    ) {
         self.storeId = storeId
-        self.protected = protected
-        self.promptMessage = promptMessage
+        self.protection = protection
+        self.accessControl = accessControl
+        self.policy = policy
+        self.itemClass = itemClass
     }
 }
 
 // MARK: Save Operations
-extension KeychainStorage{
+extension KeychainDataStorage{
     public func save(_ data: Data, withTag tag: String) throws{
         deleteItem(withTag: tag)
         
         let tag = map(tag: tag)
         
-        let query = try CFDictionary.createQueryForDataStore(data, tag: tag, protected: protected)
+        let query = try CFDictionary.createQueryForDataStore(
+            data,
+            tag: tag,
+            itemClass: itemClass,
+            context: context,
+            protection: protection,
+            accessControlFlags: accessControl,
+            policy: policy
+        )
         
         try KeychainOperation.addItem(using: query)
     }
@@ -41,11 +78,11 @@ extension KeychainStorage{
 }
 
 // MARK: Load Operations
-extension KeychainStorage{
+extension KeychainDataStorage{
     public func loadData(withTag tag: String) throws -> Data{
         let tag = map(tag: tag)
         
-        let query = CFDictionary.createQueryForDataRetrieve(tag: tag, promptMessage: promptMessage)
+        let query = CFDictionary.createQueryForDataRetrieve(tag: tag, itemClass: itemClass, promptMessage: promptMessage)
         
         return try KeychainOperation.loadItem(using: query)
     }
@@ -61,7 +98,7 @@ extension KeychainStorage{
 }
 
 // MARK: Delete Operations
-extension KeychainStorage{
+extension KeychainDataStorage{
     @discardableResult
     public func deleteItem(withTag tag: String) -> Bool{
         let tag = map(tag: tag)
@@ -69,7 +106,7 @@ extension KeychainStorage{
     }
     
     private func deleteItem(withNoPrefixTag tag: String) -> Bool {
-        let query = CFDictionary.createQueryForDataDeletion(tag: tag)
+        let query = CFDictionary.createQueryForDataDeletion(tag: tag, itemClass: itemClass)
         
         return KeychainOperation.deleteItem(using: query)
     }
@@ -78,6 +115,7 @@ extension KeychainStorage{
     public func clear() -> Bool {
         let getItemsQuery = CFDictionary.createQueryForDataRetrieve(
             matchLimit: kSecMatchLimitAll,
+            itemClass: itemClass,
             returnAttributes: true,
             promptMessage: "Please Authenticate to delete items into keychain"
         )
@@ -99,7 +137,7 @@ extension KeychainStorage{
     }
 }
 
-private extension KeychainStorage{
+private extension KeychainDataStorage{
     func map(tag: String) -> String{
         "\(storeId).\(tag)"
     }
