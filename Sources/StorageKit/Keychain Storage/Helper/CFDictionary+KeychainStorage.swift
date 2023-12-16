@@ -24,13 +24,13 @@ extension CFDictionary{
         return query as CFDictionary
     }
     
-    static func createQueryForDataRetrieve(tag: String, promptMessage: String? = nil) -> CFDictionary{
+    static func createQueryForDataRetrieve(tag: String, matchLimit: CFString = kSecMatchLimitOne, promptMessage: String? = nil) -> CFDictionary{
         [
             kSecClass as String                     : kSecClassGenericPassword,
             kSecAttrAccount as String               : tag,
             kSecReturnData as String                : true,
             kSecUseOperationPrompt as String        : promptMessage ?? "Please authenticate",
-            kSecMatchLimit as String                : kSecMatchLimitOne
+            kSecMatchLimit as String                : matchLimit
         ] as CFDictionary
     }
     

@@ -82,13 +82,36 @@ final class EncryptedStorageTests: XCTestCase, StorageTests {
         
         try assert_delete_returnsTrueOnKnownTag(sut: sut, someTag: someTag)
     }
+    
+    // MARK: SPECIFIC SUT TESTS
+    func test_clear_deletesAllTheItemsInTheSameStoreId() throws {
+        let someData = Data("someData".utf8)
+        let sut1 = makeSUT(storeId: "test.keychain.storage1")
+        try sut1.save(someData, withTag: "tag1")
+        try sut1.save(someData, withTag: "tag2")
+        
+        let sut2 = makeSUT(storeId: "test.keychain.storage2")
+        try sut2.save(someData, withTag: "tag1")
+        
+        XCTAssertTrue(sut1.clear())
+        XCTAssertThrowsError(try sut1.loadData(withTag: "tag1"))
+        XCTAssertThrowsError(try sut1.loadData(withTag: "tag2"))
+        
+        XCTAssertEqual(try sut2.loadData(withTag: "tag1"), someData)
+        
+        addTeardownBlock {
+            sut1.deleteItem(withTag: "tag1")
+            sut1.deleteItem(withTag: "tag2")
+            sut2.deleteItem(withTag: "tag1")
+        }
+    }
 }
 
 private extension EncryptedStorageTests{
     var someTag: String{ "someTag" }
     
-    func makeSUT(tagToDelete: String? = nil) -> KeychainStorage{
-        let sut = EncryptedStorage(storeId: "test.keychain.storage")
+    func makeSUT(storeId: String = "test.keychain.storage", tagToDelete: String? = nil) -> KeychainStorage{
+        let sut = EncryptedStorage(storeId: storeId)
         let someTag = tagToDelete ?? someTag
         addTeardownBlock {
             sut.deleteItem(withTag: someTag)

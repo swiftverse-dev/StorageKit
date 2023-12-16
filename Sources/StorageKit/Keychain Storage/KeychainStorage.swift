@@ -87,10 +87,44 @@ extension KeychainStorage{
     @discardableResult
     public func deleteItem(withTag tag: String) -> Bool{
         let tag = map(tag: tag)
-        
+        return deleteItem(withNoPrefixTag: tag)
+    }
+    
+    private func deleteItem(withNoPrefixTag tag: String) -> Bool {
         let query = CFDictionary.createQueryForDataDeletion(tag: tag)
         
         return KeychainOperation.deleteItem(using: query)
+    }
+    
+    @discardableResult
+    public func clear() -> Bool {
+        let getItemsQuery = [
+            kSecClass as String                     : kSecClassGenericPassword,
+            kSecReturnData as String                : true,
+            kSecUseOperationPrompt as String        : promptMessage ?? "Please authenticate",
+            kSecReturnAttributes as String          : kCFBooleanTrue,
+            kSecMatchLimit as String                : kSecMatchLimitAll
+        ] as CFDictionary
+        
+        // Search for all items with the specified prefix
+        var result: AnyObject?
+        let status = SecItemCopyMatching(getItemsQuery, &result)
+        
+        guard status == errSecSuccess, let items = result as? [[String: Any]] else {
+            print("Error searching for keychain items: \(status)")
+            return false
+        }
+        
+        var results = [Bool]()
+        for item in items {
+            guard let itemTag = item[kSecAttrAccount as String] as? String, itemTag.starts(with: storeId) else  {
+                continue
+            }
+            let result = deleteItem(withNoPrefixTag: itemTag)
+            results.append(result)
+        }
+        
+        return results.allSatisfy{ $0 }
     }
 }
 
