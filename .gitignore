@@ -65,16 +65,29 @@ timeline.xctimeline
 playground.xcworkspace
 
 # Swift Package Manager
-.DS_Store
-/.build
 /Packages
-xcuserdata/
-DerivedData/
 .swiftpm/configuration/registries.json
 .swiftpm/xcode/package.xcworkspace/contents.xcworkspacedata
 .netrc
-
-.build/
+.build
+DerivedData
+/.previous-build
+xcuserdata
+.DS_Store
+*~
+\#*
+.\#*
+.*.sw[nop]
+*.xcscmblueprint
+/default.profraw
+*.xcodeproj
+Utilities/Docker/*.tar.gz
+.swiftpm
+Package.resolved
+/build
+*.pyc
+.docc-build
+.vscode
 
 # CocoaPods
 # We recommend against adding the Pods directory to your .gitignore. However
