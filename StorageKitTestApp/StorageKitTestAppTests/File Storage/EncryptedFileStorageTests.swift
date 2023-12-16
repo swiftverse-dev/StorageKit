@@ -12,74 +12,74 @@ final class EncryptedFileStorageTests: XCTestCase, StorageTests {
     typealias Error = EncryptedFileStorage.Error
     
     // MARK: Tests for StorageTests protocol
-    func test_saveData_succeeds(){
+    func test_saveData_succeeds() throws{
         let someTag = someTag
-        let sut = makeSUT(tagToDelete: someTag)
+        let sut = try makeSUT(tagToDelete: someTag)
 
         assert_saveData_succeeds(sut: sut, someTag: someTag)
     }
     
     func test_saveData_overridesPreviouslyStoredValue() throws{
         let someTag = someTag
-        let sut = makeSUT(tagToDelete: someTag)
+        let sut = try makeSUT(tagToDelete: someTag)
         
         try assert_saveData_overridesPreviouslyStoredValue(sut: sut, someTag: someTag)
     }
     
-    func test_saveObject_succeeds(){
+    func test_saveObject_succeeds() throws{
         let someTag = someTag
-        let sut = makeSUT(tagToDelete: someTag)
+        let sut = try makeSUT(tagToDelete: someTag)
         
         assert_saveObject_succeeds(sut: sut, someTag: someTag)
     }
     
     func test_saveObject_overridesPreviouslyStoredValue() throws{
         let someTag = someTag
-        let sut = makeSUT(tagToDelete: someTag)
+        let sut = try makeSUT(tagToDelete: someTag)
         
         try assert_saveObject_overridesPreviouslyStoredValue(sut: sut, someTag: someTag)
     }
     
     func test_loadData_throwsItemNotFoundOnUnknownTag() throws{
-        let sut = makeSUT()
+        let sut = try makeSUT()
         try assert_loadData_throwsItemNotFoundOnUnknownTag(sut: sut, error: .itemNotFound)
     }
     
     func test_loadData_returnsTheDataPreviouslySaved() throws{
         let someTag = someTag
-        let sut = makeSUT(tagToDelete: someTag)
+        let sut = try makeSUT(tagToDelete: someTag)
         
         try assert_loadData_returnsTheDataPreviouslySaved(sut: sut, someTag: someTag)
     }
     
     func test_loadObj_throwsItemNotFoundOnUnknownTag() throws{
-        let sut = makeSUT()
+        let sut = try makeSUT()
         
         try assert_loadObj_throwsItemNotFoundOnUnknownTag(sut: sut, error: .itemNotFound)
     }
     
     func test_loadObj_returnsTheDataPreviouslySaved() throws{
         let someTag = someTag
-        let sut = makeSUT(tagToDelete: someTag)
+        let sut = try makeSUT(tagToDelete: someTag)
         
         try assert_loadObj_returnsTheDataPreviouslySaved(sut: sut, someTag: someTag)
     }
     
     func test_loadObj_throwsDecodeFailureOnWrongObjectSchema() throws{
         let someTag = someTag
-        let sut = makeSUT(tagToDelete: someTag)
+        let sut = try makeSUT(tagToDelete: someTag)
         
         try assert_loadObj_throwsDecodeFailureOnWrongObjectSchema(sut: sut, someTag: someTag, error: .decodeFailure)
     }
     
-    func test_delete_returnsFalseOnUnknownTag(){
-        let sut = makeSUT()
+    func test_delete_returnsFalseOnUnknownTag() throws {
+        let sut = try makeSUT()
         assert_delete_returnsFalseOnUnknownTag(sut: sut)
     }
     
     func test_delete_returnsTrueOnKnownTag() throws{
         let someTag = someTag
-        let sut = makeSUT(tagToDelete: someTag)
+        let sut = try makeSUT(tagToDelete: someTag)
         
         try assert_delete_returnsTrueOnKnownTag(sut: sut, someTag: someTag)
     }
@@ -88,13 +88,13 @@ final class EncryptedFileStorageTests: XCTestCase, StorageTests {
     func test_saveData_canCreateTheSameFileInDifferentFolders() throws{
         let someTag = someTag
         let folderTest1 = "testOne.encryptedFile.storage"
-        let sut1 = makeSUT(folder: folderTest1, tagToDelete: someTag)
+        let sut1 = try makeSUT(folder: folderTest1, tagToDelete: someTag)
 
         let someData1 = Data("some data 1".utf8)
         try sut1.save(someData1, withTag: someTag)
 
         let folderTest2 = "testTwo.encryptedFile.storage"
-        let sut2 = makeSUT(folder: folderTest2, tagToDelete: someTag)
+        let sut2 = try makeSUT(folder: folderTest2, tagToDelete: someTag)
 
         let someData2 = Data("some data 2".utf8)
         try sut2.save(someData2, withTag: someTag)
@@ -114,11 +114,11 @@ private extension EncryptedFileStorageTests{
     var root: URL{ FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first! }
     var folderTest: String{ "test.encrypted.storage" }
     
-    func makeSUT(folder: String? = nil, tagToDelete: String? = nil) -> Storage{
+    func makeSUT(folder: String? = nil, tagToDelete: String? = nil) throws -> Storage{
         let folder = folder ?? folderTest
         let someTag = tagToDelete ?? someTag
         
-        let sut = try! EncryptedFileStorage(root: root, folder: folder)
+        let sut = try EncryptedFileStorage(root: root, folder: folder)
         addTeardownBlock { [weak self] in
             self?.clearDisk(forFolder: folder, tag: someTag)
         }

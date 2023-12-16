@@ -11,10 +11,10 @@ import StorageKit
 protocol StorageTests: XCTestCase {
     associatedtype Error: Swift.Error & Equatable
     
-    func test_saveData_succeeds()
+    func test_saveData_succeeds() throws
     func test_saveData_overridesPreviouslyStoredValue() throws
     
-    func test_saveObject_succeeds()
+    func test_saveObject_succeeds() throws
     func test_saveObject_overridesPreviouslyStoredValue() throws
     
     func test_loadData_throwsItemNotFoundOnUnknownTag() throws
@@ -24,7 +24,7 @@ protocol StorageTests: XCTestCase {
     func test_loadObj_returnsTheDataPreviouslySaved() throws
     func test_loadObj_throwsDecodeFailureOnWrongObjectSchema() throws
     
-    func test_delete_returnsFalseOnUnknownTag()
+    func test_delete_returnsFalseOnUnknownTag() throws
     func test_delete_returnsTrueOnKnownTag() throws
 }
 

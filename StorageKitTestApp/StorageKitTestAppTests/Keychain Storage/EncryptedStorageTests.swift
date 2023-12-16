@@ -8,11 +8,10 @@
 import XCTest
 import StorageKit
 
-
 final class EncryptedStorageTests: XCTestCase, StorageTests {
     typealias Error = KeychainStorageError
     
-    func test_saveData_succeeds(){
+    func test_saveData_succeeds() throws{
         let someTag = someTag
         let sut = makeSUT(tagToDelete: someTag)
 
@@ -26,7 +25,7 @@ final class EncryptedStorageTests: XCTestCase, StorageTests {
         try assert_saveData_overridesPreviouslyStoredValue(sut: sut, someTag: someTag)
     }
     
-    func test_saveObject_succeeds(){
+    func test_saveObject_succeeds() throws{
         let someTag = someTag
         let sut = makeSUT(tagToDelete: someTag)
         
@@ -72,7 +71,7 @@ final class EncryptedStorageTests: XCTestCase, StorageTests {
         try assert_loadObj_throwsDecodeFailureOnWrongObjectSchema(sut: sut, someTag: someTag, error: .decodeFailure)
     }
     
-    func test_delete_returnsFalseOnUnknownTag(){
+    func test_delete_returnsFalseOnUnknownTag() throws{
         let sut = makeSUT()
         assert_delete_returnsFalseOnUnknownTag(sut: sut)
     }
