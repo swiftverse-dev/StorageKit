@@ -122,4 +122,15 @@ public extension EncryptedFileStorage{
         guard let _ = try? fileManager.removeItem(at: fileURL) else { return false }
         return true
     }
+    
+    @discardableResult
+    public func clear() -> Bool {
+        do {
+            try fileManager.removeItem(at: folderURL)
+            return true
+        } catch {
+            print(error)
+            return false
+        }
+    }
 }

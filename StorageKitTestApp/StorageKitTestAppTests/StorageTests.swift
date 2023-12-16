@@ -26,6 +26,8 @@ protocol StorageTests: XCTestCase {
     
     func test_delete_returnsFalseOnUnknownTag() throws
     func test_delete_returnsTrueOnKnownTag() throws
+    func test_clear_returnsTrueWhenDeletesAllTheItemsOfTheStorage() throws
+    func test_clear_returnsFalseWhenThereAreNoItemsInTheStorage() throws
 }
 
 extension StorageTests{
@@ -112,6 +114,26 @@ extension StorageTests{
         
         try sut.save(someData, withTag: someTag)
         XCTAssertTrue(sut.deleteItem(withTag: someTag), file: file, line: line)
+    }
+    
+    func assert_clear_returnsTrueWhenDeletesAllTheItemsOfTheStorage(sut: (String) throws -> Storage, file: StaticString = #file, line: UInt = #line) throws {
+        let someData = Data("someData".utf8)
+        let sut1 = try sut("test.folder1")
+        try sut1.save(someData, withTag: "tag1")
+        try sut1.save(someData, withTag: "tag2")
+        
+        let sut2 = try sut("test.folder2")
+        try sut2.save(someData, withTag: "tag1")
+        
+        XCTAssertTrue(sut1.clear(), file: file, line: line)
+        XCTAssertThrowsError(try sut1.loadData(withTag: "tag1"), file: file, line: line)
+        XCTAssertThrowsError(try sut1.loadData(withTag: "tag2"), file: file, line: line)
+        
+        XCTAssertEqual(try sut2.loadData(withTag: "tag1"), someData, file: file, line: line)
+    }
+    
+    func assert_clear_returnsFalseWhenThereAreNoItemsInTheStorage(sut: Storage, file: StaticString = #file, line: UInt = #line) throws {
+        XCTAssertFalse(sut.clear(), file: file, line: line)
     }
 }
 

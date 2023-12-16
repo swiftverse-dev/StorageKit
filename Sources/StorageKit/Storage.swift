@@ -16,4 +16,6 @@ public protocol Storage{
     
     @discardableResult
     func deleteItem(withTag tag: String) -> Bool
+    @discardableResult
+    func clear() -> Bool
 }

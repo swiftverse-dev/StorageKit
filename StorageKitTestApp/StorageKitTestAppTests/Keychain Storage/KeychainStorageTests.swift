@@ -13,28 +13,28 @@ final class KeychainStorageTests: XCTestCase, StorageTests {
     
     func test_saveData_succeeds() throws{
         let someTag = someTag
-        let sut = makeSUT(tagToDelete: someTag)
+        let sut = makeSUT()
 
         assert_saveData_succeeds(sut: sut, someTag: someTag)
     }
     
     func test_saveData_overridesPreviouslyStoredValue() throws{
         let someTag = someTag
-        let sut = makeSUT(tagToDelete: someTag)
+        let sut = makeSUT()
         
         try assert_saveData_overridesPreviouslyStoredValue(sut: sut, someTag: someTag)
     }
     
     func test_saveObject_succeeds() throws{
         let someTag = someTag
-        let sut = makeSUT(tagToDelete: someTag)
+        let sut = makeSUT()
         
         assert_saveObject_succeeds(sut: sut, someTag: someTag)
     }
     
     func test_saveObject_overridesPreviouslyStoredValue() throws{
         let someTag = someTag
-        let sut = makeSUT(tagToDelete: someTag)
+        let sut = makeSUT()
         
         try assert_saveObject_overridesPreviouslyStoredValue(sut: sut, someTag: someTag)
     }
@@ -46,7 +46,7 @@ final class KeychainStorageTests: XCTestCase, StorageTests {
     
     func test_loadData_returnsTheDataPreviouslySaved() throws{
         let someTag = someTag
-        let sut = makeSUT(tagToDelete: someTag)
+        let sut = makeSUT()
         
         try assert_loadData_returnsTheDataPreviouslySaved(sut: sut, someTag: someTag)
     }
@@ -59,14 +59,14 @@ final class KeychainStorageTests: XCTestCase, StorageTests {
     
     func test_loadObj_returnsTheDataPreviouslySaved() throws{
         let someTag = someTag
-        let sut = makeSUT(tagToDelete: someTag)
+        let sut = makeSUT()
         
         try assert_loadObj_returnsTheDataPreviouslySaved(sut: sut, someTag: someTag)
     }
     
     func test_loadObj_throwsDecodeFailureOnWrongObjectSchema() throws{
         let someTag = someTag
-        let sut = makeSUT(tagToDelete: someTag)
+        let sut = makeSUT()
         
         try assert_loadObj_throwsDecodeFailureOnWrongObjectSchema(sut: sut, someTag: someTag, error: .decodeFailure)
     }
@@ -78,38 +78,18 @@ final class KeychainStorageTests: XCTestCase, StorageTests {
     
     func test_delete_returnsTrueOnKnownTag() throws{
         let someTag = someTag
-        let sut = makeSUT(tagToDelete: someTag)
+        let sut = makeSUT()
         
         try assert_delete_returnsTrueOnKnownTag(sut: sut, someTag: someTag)
     }
     
-    // MARK: SPECIFIC SUT TESTS
     func test_clear_returnsTrueWhenDeletesAllTheItemsOfTheStorage() throws {
-        let someData = Data("someData".utf8)
-        let sut1 = makeSUT(storeId: "test.keychain.storage1")
-        try sut1.save(someData, withTag: "tag1")
-        try sut1.save(someData, withTag: "tag2")
-        
-        let sut2 = makeSUT(storeId: "test.keychain.storage2")
-        try sut2.save(someData, withTag: "tag1")
-        
-        XCTAssertTrue(sut1.clear())
-        XCTAssertThrowsError(try sut1.loadData(withTag: "tag1"))
-        XCTAssertThrowsError(try sut1.loadData(withTag: "tag2"))
-        
-        XCTAssertEqual(try sut2.loadData(withTag: "tag1"), someData)
-        
-        addTeardownBlock {
-            sut1.deleteItem(withTag: "tag1")
-            sut1.deleteItem(withTag: "tag2")
-            sut2.deleteItem(withTag: "tag1")
-        }
+        try assert_clear_returnsTrueWhenDeletesAllTheItemsOfTheStorage(sut: makeSUT(storeId:))
     }
     
     func test_clear_returnsFalseWhenThereAreNoItemsInTheStorage() throws {
-        let sut = makeSUT(storeId: "test.keychain.storage1")
-        
-        XCTAssertFalse(sut.clear())
+        let sut = makeSUT()
+        try assert_clear_returnsFalseWhenThereAreNoItemsInTheStorage(sut: sut)
     }
 
 }
@@ -117,11 +97,10 @@ final class KeychainStorageTests: XCTestCase, StorageTests {
 private extension KeychainStorageTests{
     var someTag: String{ "someTag" }
     
-    func makeSUT(storeId: String = "test.keychain.storage", tagToDelete: String? = nil) -> KeychainDataStorage{
+    func makeSUT(storeId: String = "test.keychain.storage") -> KeychainDataStorage{
         let sut = KeychainDataStorage(storeId: storeId, protection: .whenUnlocked, itemClass: kSecClassInternetPassword)
-        let someTag = tagToDelete ?? someTag
         addTeardownBlock {
-            sut.deleteItem(withTag: someTag)
+            sut.clear()
         }
         return sut
     }
