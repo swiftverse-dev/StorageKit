@@ -84,7 +84,7 @@ final class KeychainStorageTests: XCTestCase, StorageTests {
     }
     
     // MARK: SPECIFIC SUT TESTS
-    func test_clear_deletesAllTheItemsInTheSameStoreId() throws {
+    func test_clear_returnsTrueWhenDeletesAllTheItemsOfTheStorage() throws {
         let someData = Data("someData".utf8)
         let sut1 = makeSUT(storeId: "test.keychain.storage1")
         try sut1.save(someData, withTag: "tag1")
@@ -105,13 +105,20 @@ final class KeychainStorageTests: XCTestCase, StorageTests {
             sut2.deleteItem(withTag: "tag1")
         }
     }
+    
+    func test_clear_returnsFalseWhenThereAreNoItemsInTheStorage() throws {
+        let sut = makeSUT(storeId: "test.keychain.storage1")
+        
+        XCTAssertFalse(sut.clear())
+    }
+
 }
 
 private extension KeychainStorageTests{
     var someTag: String{ "someTag" }
     
-    func makeSUT(storeId: String = "test.keychain.storage", tagToDelete: String? = nil) -> KeychainStorage{
-        let sut = KeychainStorage(storeId: storeId)
+    func makeSUT(storeId: String = "test.keychain.storage", tagToDelete: String? = nil) -> KeychainDataStorage{
+        let sut = KeychainDataStorage(storeId: storeId, protection: .whenUnlocked, itemClass: kSecClassInternetPassword)
         let someTag = tagToDelete ?? someTag
         addTeardownBlock {
             sut.deleteItem(withTag: someTag)

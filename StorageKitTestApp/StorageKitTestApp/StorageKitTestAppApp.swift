@@ -20,8 +20,8 @@ struct StorageKitTestAppApp: App {
     
     func test() {
         let storeID = "keychain.store"
-        let encryptedStore = EncryptedStorage(storeId: storeID)
-        let biometricStore = BiometricStorage(storeId: storeID)
+        let encryptedStore = KeychainEncryptedStorage(storeId: storeID)
+        let biometricStore = KeychainBiometricStorage(storeId: storeID)
         
         let value = Data("value".utf8)
         
@@ -29,6 +29,8 @@ struct StorageKitTestAppApp: App {
         try! encryptedStore.save(value, withTag: "tag2")
         try! biometricStore.save(value, withTag: "tag3")
         
-        encryptedStore.clear()
+        print(try! encryptedStore.loadData(withTag: "tag1"))
+        print(encryptedStore.clear())
+        print(biometricStore.clear())
     }
 }

@@ -9,6 +9,7 @@ import Foundation
 
 public enum KeychainStorageError: Swift.Error{
     case passcodeDisabled
+    case biometryDisabled
     case itemNotFound
     case userCancelOperation
     case storeNotAvailable
