@@ -32,6 +32,21 @@ enum KeychainOperation{
         return data
     }
     
+    static func loadAttributedItems(using query: CFDictionary) throws -> [[String: Any]] {
+        var ref: AnyObject?
+        let status = SecItemCopyMatching(query, &ref)
+        
+        if let err = KeychainStorageError(from: status){
+            throw err
+        }
+        
+        guard let items = ref as? [[String: Any]] else{
+            throw KeychainStorageError.itemNotFound
+        }
+        
+        return items
+    }
+    
     static func deleteItem(using query: CFDictionary) -> Bool{
         let status = SecItemDelete(query)
         

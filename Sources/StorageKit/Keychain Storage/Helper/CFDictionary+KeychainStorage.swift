@@ -24,14 +24,25 @@ extension CFDictionary{
         return query as CFDictionary
     }
     
-    static func createQueryForDataRetrieve(tag: String, matchLimit: CFString = kSecMatchLimitOne, promptMessage: String? = nil) -> CFDictionary{
-        [
+    static func createQueryForDataRetrieve(
+        tag: String? = nil,
+        matchLimit: CFString = kSecMatchLimitOne,
+        returnAttributes: Bool = false,
+        promptMessage: String? = nil
+    ) -> CFDictionary{
+        var query = [
             kSecClass as String                     : kSecClassGenericPassword,
-            kSecAttrAccount as String               : tag,
             kSecReturnData as String                : true,
             kSecUseOperationPrompt as String        : promptMessage ?? "Please authenticate",
-            kSecMatchLimit as String                : matchLimit
-        ] as CFDictionary
+            kSecMatchLimit as String                : matchLimit,
+            kSecReturnAttributes as String          : returnAttributes ? kCFBooleanTrue : kCFBooleanFalse,
+        ] as [String: Any]
+        
+        if let tag {
+            query[kSecAttrAccount as String] = tag
+        }
+        
+        return query as CFDictionary
     }
     
     static func createQueryForDataDeletion(tag: String) -> CFDictionary{

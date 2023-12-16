@@ -98,33 +98,26 @@ extension KeychainStorage{
     
     @discardableResult
     public func clear() -> Bool {
-        let getItemsQuery = [
-            kSecClass as String                     : kSecClassGenericPassword,
-            kSecReturnData as String                : true,
-            kSecUseOperationPrompt as String        : promptMessage ?? "Please authenticate",
-            kSecReturnAttributes as String          : kCFBooleanTrue,
-            kSecMatchLimit as String                : kSecMatchLimitAll
-        ] as CFDictionary
+        let getItemsQuery = CFDictionary.createQueryForDataRetrieve(
+            matchLimit: kSecMatchLimitAll,
+            returnAttributes: true,
+            promptMessage: "Please Authenticate to delete items into keychain"
+        )
         
-        // Search for all items with the specified prefix
-        var result: AnyObject?
-        let status = SecItemCopyMatching(getItemsQuery, &result)
+        // Search all the items in the keychain
+        guard let items = try? KeychainOperation.loadAttributedItems(using: getItemsQuery) else { return false }
         
-        guard status == errSecSuccess, let items = result as? [[String: Any]] else {
-            print("Error searching for keychain items: \(status)")
-            return false
-        }
-        
-        var results = [Bool]()
-        for item in items {
-            guard let itemTag = item[kSecAttrAccount as String] as? String, itemTag.starts(with: storeId) else  {
-                continue
+        return items
+            .compactMap{
+                // Filter the items starting with a prefix equal to `storeIs` property
+                guard let itemTag = $0[kSecAttrAccount as String] as? String,
+                          itemTag.starts(with: storeId) else  {
+                    return nil
+                }
+                // Delete the single Item
+                return deleteItem(withNoPrefixTag: itemTag)
             }
-            let result = deleteItem(withNoPrefixTag: itemTag)
-            results.append(result)
-        }
-        
-        return results.allSatisfy{ $0 }
+            .allSatisfy{ $0 }
     }
 }
 
