@@ -1,44 +1,22 @@
 //
 //  KeychainStorage.swift
-//  JiffySdk
+//  StorageKit
 //
 //  Created by Lorenzo Limoli on 16/11/22.
 //
 
 import Foundation
 
-public enum KeychainStorageError: Swift.Error{
-    case passcodeDisabled
-    case itemNotFound
-    case userCancelOperation
-    case storeNotAvailable
-    case decodeFailure
-    case encodeFailure
-    case authenticationFailure
-    case unexpectedFailure
+open class KeychainStorage: Storage{
+    public let storeId: String
+    public let protected: Bool
+    public var promptMessage: String?
     
-    public init?(from status: OSStatus){
-        switch status {
-        case noErr, errSecSuccess: return nil
-        case errSecUserCanceled: self = .userCancelOperation
-        case errSecNotAvailable: self = .storeNotAvailable
-        case errSecItemNotFound: self = .itemNotFound
-        case errSecInteractionNotAllowed: self = .passcodeDisabled
-        case errSecDecode: self = .decodeFailure
-        case errSecAuthFailed: self = .authenticationFailure
-        default: self = .unexpectedFailure
-        }
+    public init(storeId: String, protected: Bool = false, promptMessage: String? = nil) {
+        self.storeId = storeId
+        self.protected = protected
+        self.promptMessage = promptMessage
     }
-}
-
-public protocol KeychainStorage: Storage{
-    var storeId: String { get }
-    var protected: Bool { get }
-    var promptMessage: String? { get }
-}
-
-public extension KeychainStorage{
-    var promptMessage: String?{ nil }
 }
 
 // MARK: Save Operations

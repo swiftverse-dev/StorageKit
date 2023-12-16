@@ -6,12 +6,29 @@
 //
 
 import SwiftUI
+import StorageKit
 
 @main
 struct StorageKitTestAppApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            Button("Authenticate") {
+                test()
+            }
         }
+    }
+    
+    func test() {
+        let storeID = "keychain.store"
+        let encryptedStore = EncryptedStorage(storeId: storeID)
+        let biometricStore = BiometricStorage(storeId: storeID)
+        
+        let value = Data("value".utf8)
+        
+        try! encryptedStore.save(value, withTag: "tag1")
+        try! encryptedStore.save(value, withTag: "tag2")
+        try! biometricStore.save(value, withTag: "tag3")
+        
+        encryptedStore.clear()
     }
 }

@@ -1,6 +1,6 @@
 //
 //  EncryptedFileStorage.swift
-//  JiffySdk
+//  StorageKit
 //
 //  Created by Lorenzo Limoli on 17/11/22.
 //

@@ -1,6 +1,6 @@
 //
 //  EncryptedStorage.swift
-//  JiffySdk
+//  StorageKit
 //
 //  Created by Lorenzo Limoli on 17/11/22.
 //
@@ -9,12 +9,10 @@ import Foundation
 
 public final class EncryptedStorage: KeychainStorage{
     
-    private static let defaultStoreId = Bundle(for: EncryptedStorage.self).bundleIdentifier ?? "" + ".encrypted.storage"
+    private static let defaultStoreId = "default.encrypted.storage"
+    public static let `default` = EncryptedStorage(storeId: defaultStoreId)
     
-    public let storeId: String
-    public let protected: Bool = false
-    
-    public init(storeId: String? = nil){
-        self.storeId = storeId ?? Self.defaultStoreId
+    public init(storeId: String){
+        super.init(storeId: storeId ?? Self.defaultStoreId, protected: false)
     }
 }

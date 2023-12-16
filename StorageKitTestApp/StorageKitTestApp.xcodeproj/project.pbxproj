@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		01102CAB2B2E22F00091B991 /* KeychainStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01102CAA2B2E22F00091B991 /* KeychainStorageTests.swift */; };
+		01102CAE2B2E243A0091B991 /* StorageKit in Frameworks */ = {isa = PBXBuildFile; productRef = 01102CAD2B2E243A0091B991 /* StorageKit */; };
 		014E66832B2DFE550047A108 /* StorageKit in Frameworks */ = {isa = PBXBuildFile; productRef = 014E66822B2DFE550047A108 /* StorageKit */; };
 		014FBCBD2B2DF53400487FB5 /* StorageKitTestAppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014FBCBC2B2DF53400487FB5 /* StorageKitTestAppApp.swift */; };
 		014FBCBF2B2DF53400487FB5 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014FBCBE2B2DF53400487FB5 /* ContentView.swift */; };
@@ -14,7 +16,6 @@
 		014FBCC52B2DF53600487FB5 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 014FBCC42B2DF53600487FB5 /* Preview Assets.xcassets */; };
 		014FBCE92B2DF7C000487FB5 /* StorageKit in Frameworks */ = {isa = PBXBuildFile; productRef = 014FBCE82B2DF7C000487FB5 /* StorageKit */; };
 		014FBCEF2B2DF7E600487FB5 /* StorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014FBCEA2B2DF7E600487FB5 /* StorageTests.swift */; };
-		014FBCF02B2DF7E600487FB5 /* EncryptedStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014FBCEC2B2DF7E600487FB5 /* EncryptedStorageTests.swift */; };
 		014FBCF12B2DF7E600487FB5 /* EncryptedFileStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014FBCEE2B2DF7E600487FB5 /* EncryptedFileStorageTests.swift */; };
 		014FBCF32B2DF91800487FB5 /* StorageKit in Frameworks */ = {isa = PBXBuildFile; productRef = 014FBCF22B2DF91800487FB5 /* StorageKit */; };
 /* End PBXBuildFile section */
@@ -30,6 +31,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		01102CAA2B2E22F00091B991 /* KeychainStorageTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeychainStorageTests.swift; sourceTree = "<group>"; };
 		014FBCB92B2DF53400487FB5 /* StorageKitTestApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StorageKitTestApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		014FBCBC2B2DF53400487FB5 /* StorageKitTestAppApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageKitTestAppApp.swift; sourceTree = "<group>"; };
 		014FBCBE2B2DF53400487FB5 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -38,7 +40,6 @@
 		014FBCC42B2DF53600487FB5 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		014FBCCA2B2DF53700487FB5 /* StorageKitTestAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StorageKitTestAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		014FBCEA2B2DF7E600487FB5 /* StorageTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StorageTests.swift; sourceTree = "<group>"; };
-		014FBCEC2B2DF7E600487FB5 /* EncryptedStorageTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EncryptedStorageTests.swift; sourceTree = "<group>"; };
 		014FBCEE2B2DF7E600487FB5 /* EncryptedFileStorageTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EncryptedFileStorageTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -50,6 +51,7 @@
 				014FBCE92B2DF7C000487FB5 /* StorageKit in Frameworks */,
 				014FBCF32B2DF91800487FB5 /* StorageKit in Frameworks */,
 				014E66832B2DFE550047A108 /* StorageKit in Frameworks */,
+				01102CAE2B2E243A0091B991 /* StorageKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -114,7 +116,7 @@
 		014FBCEB2B2DF7E600487FB5 /* Keychain Storage */ = {
 			isa = PBXGroup;
 			children = (
-				014FBCEC2B2DF7E600487FB5 /* EncryptedStorageTests.swift */,
+				01102CAA2B2E22F00091B991 /* KeychainStorageTests.swift */,
 			);
 			path = "Keychain Storage";
 			sourceTree = "<group>";
@@ -147,6 +149,7 @@
 				014FBCE82B2DF7C000487FB5 /* StorageKit */,
 				014FBCF22B2DF91800487FB5 /* StorageKit */,
 				014E66822B2DFE550047A108 /* StorageKit */,
+				01102CAD2B2E243A0091B991 /* StorageKit */,
 			);
 			productName = StorageKitTestApp;
 			productReference = 014FBCB92B2DF53400487FB5 /* StorageKitTestApp.app */;
@@ -199,7 +202,7 @@
 			);
 			mainGroup = 014FBCB02B2DF53400487FB5;
 			packageReferences = (
-				014E66812B2DFE550047A108 /* XCLocalSwiftPackageReference ".." */,
+				01102CAC2B2E243A0091B991 /* XCLocalSwiftPackageReference ".." */,
 			);
 			productRefGroup = 014FBCBA2B2DF53400487FB5 /* Products */;
 			projectDirPath = "";
@@ -245,8 +248,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				014FBCF12B2DF7E600487FB5 /* EncryptedFileStorageTests.swift in Sources */,
+				01102CAB2B2E22F00091B991 /* KeychainStorageTests.swift in Sources */,
 				014FBCEF2B2DF7E600487FB5 /* StorageTests.swift in Sources */,
-				014FBCF02B2DF7E600487FB5 /* EncryptedStorageTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -392,6 +395,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSFaceIDUsageDescription = Authenticate;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -428,6 +432,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSFaceIDUsageDescription = Authenticate;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -526,13 +531,17 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		014E66812B2DFE550047A108 /* XCLocalSwiftPackageReference ".." */ = {
+		01102CAC2B2E243A0091B991 /* XCLocalSwiftPackageReference ".." */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ..;
 		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		01102CAD2B2E243A0091B991 /* StorageKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = StorageKit;
+		};
 		014E66822B2DFE550047A108 /* StorageKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = StorageKit;

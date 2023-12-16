@@ -1,6 +1,6 @@
 //
 //  Storage.swift
-//  JiffySdk
+//  StorageKit
 //
 //  Created by Lorenzo Limoli on 16/11/22.
 //

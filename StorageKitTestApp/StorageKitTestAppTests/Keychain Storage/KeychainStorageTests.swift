@@ -1,5 +1,5 @@
 //
-//  EncryptedStorageTests.swift
+//  KeychainStorageTests.swift
 //  StorageKitTests
 //
 //  Created by Lorenzo Limoli on 16/11/22.
@@ -8,7 +8,7 @@
 import XCTest
 import StorageKit
 
-final class EncryptedStorageTests: XCTestCase, StorageTests {
+final class KeychainStorageTests: XCTestCase, StorageTests {
     typealias Error = KeychainStorageError
     
     func test_saveData_succeeds() throws{
@@ -107,11 +107,11 @@ final class EncryptedStorageTests: XCTestCase, StorageTests {
     }
 }
 
-private extension EncryptedStorageTests{
+private extension KeychainStorageTests{
     var someTag: String{ "someTag" }
     
     func makeSUT(storeId: String = "test.keychain.storage", tagToDelete: String? = nil) -> KeychainStorage{
-        let sut = EncryptedStorage(storeId: storeId)
+        let sut = KeychainStorage(storeId: storeId)
         let someTag = tagToDelete ?? someTag
         addTeardownBlock {
             sut.deleteItem(withTag: someTag)
