@@ -1,5 +1,5 @@
 //
-//  UserPreferencesTests.swift
+//  UserDefaultsStorageTests.swift
 //  StorageKitTestAppTests
 //
 //  Created by Lorenzo Limoli on 16/12/23.
@@ -8,8 +8,8 @@
 import XCTest
 import StorageKit
 
-final class UserPreferencesTests: XCTestCase, StorageTests {
-    typealias Error = UserPreferences.Error
+final class UserDefaultsStorageTests: XCTestCase, StorageTests {
+    typealias Error = UserDefaults.StorageError
     
     // MARK: Tests for StorageTests protocol
     func test_saveData_succeeds() throws{
@@ -94,11 +94,11 @@ final class UserPreferencesTests: XCTestCase, StorageTests {
     }
 }
 
-private extension UserPreferencesTests{
+private extension UserDefaultsStorageTests{
     var someTag: String{ "someTag" }
     
     func makeSUT(storeId: String? = nil) throws -> Storage{
-        let sut = try UserPreferences(storeId: storeId ?? "test.storeadsdasdas")
+        let sut = UserDefaults(suiteName: storeId ?? "test.storeadsdasdas")!
         addTeardownBlock {
             sut.clear()
         }

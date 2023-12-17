@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		01102CAB2B2E22F00091B991 /* KeychainStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01102CAA2B2E22F00091B991 /* KeychainStorageTests.swift */; };
 		01102CAE2B2E243A0091B991 /* StorageKit in Frameworks */ = {isa = PBXBuildFile; productRef = 01102CAD2B2E243A0091B991 /* StorageKit */; };
-		01102CB12B2E62550091B991 /* UserPreferencesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01102CB02B2E62550091B991 /* UserPreferencesTests.swift */; };
 		014E66832B2DFE550047A108 /* StorageKit in Frameworks */ = {isa = PBXBuildFile; productRef = 014E66822B2DFE550047A108 /* StorageKit */; };
 		014FBCBD2B2DF53400487FB5 /* StorageKitTestAppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014FBCBC2B2DF53400487FB5 /* StorageKitTestAppApp.swift */; };
 		014FBCBF2B2DF53400487FB5 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014FBCBE2B2DF53400487FB5 /* ContentView.swift */; };
@@ -19,6 +18,8 @@
 		014FBCEF2B2DF7E600487FB5 /* StorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014FBCEA2B2DF7E600487FB5 /* StorageTests.swift */; };
 		014FBCF12B2DF7E600487FB5 /* EncryptedFileStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014FBCEE2B2DF7E600487FB5 /* EncryptedFileStorageTests.swift */; };
 		014FBCF32B2DF91800487FB5 /* StorageKit in Frameworks */ = {isa = PBXBuildFile; productRef = 014FBCF22B2DF91800487FB5 /* StorageKit */; };
+		01CF5CAA2B2F5CCF0052BCD3 /* UserDefaultsStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01CF5CA92B2F5CCF0052BCD3 /* UserDefaultsStorageTests.swift */; };
+		01CF5CAD2B2F5D7D0052BCD3 /* StorageKit in Frameworks */ = {isa = PBXBuildFile; productRef = 01CF5CAC2B2F5D7D0052BCD3 /* StorageKit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -33,7 +34,6 @@
 
 /* Begin PBXFileReference section */
 		01102CAA2B2E22F00091B991 /* KeychainStorageTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeychainStorageTests.swift; sourceTree = "<group>"; };
-		01102CB02B2E62550091B991 /* UserPreferencesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPreferencesTests.swift; sourceTree = "<group>"; };
 		014FBCB92B2DF53400487FB5 /* StorageKitTestApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StorageKitTestApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		014FBCBC2B2DF53400487FB5 /* StorageKitTestAppApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageKitTestAppApp.swift; sourceTree = "<group>"; };
 		014FBCBE2B2DF53400487FB5 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -43,6 +43,7 @@
 		014FBCCA2B2DF53700487FB5 /* StorageKitTestAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StorageKitTestAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		014FBCEA2B2DF7E600487FB5 /* StorageTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StorageTests.swift; sourceTree = "<group>"; };
 		014FBCEE2B2DF7E600487FB5 /* EncryptedFileStorageTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EncryptedFileStorageTests.swift; sourceTree = "<group>"; };
+		01CF5CA92B2F5CCF0052BCD3 /* UserDefaultsStorageTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserDefaultsStorageTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,6 +53,7 @@
 			files = (
 				014FBCE92B2DF7C000487FB5 /* StorageKit in Frameworks */,
 				014FBCF32B2DF91800487FB5 /* StorageKit in Frameworks */,
+				01CF5CAD2B2F5D7D0052BCD3 /* StorageKit in Frameworks */,
 				014E66832B2DFE550047A108 /* StorageKit in Frameworks */,
 				01102CAE2B2E243A0091B991 /* StorageKit in Frameworks */,
 			);
@@ -67,12 +69,12 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		01102CAF2B2E62170091B991 /* User Preferences */ = {
+		01102CAF2B2E62170091B991 /* User Defaults Storage */ = {
 			isa = PBXGroup;
 			children = (
-				01102CB02B2E62550091B991 /* UserPreferencesTests.swift */,
+				01CF5CA92B2F5CCF0052BCD3 /* UserDefaultsStorageTests.swift */,
 			);
-			path = "User Preferences";
+			path = "User Defaults Storage";
 			sourceTree = "<group>";
 		};
 		014FBCB02B2DF53400487FB5 = {
@@ -116,7 +118,7 @@
 		014FBCCD2B2DF53700487FB5 /* StorageKitTestAppTests */ = {
 			isa = PBXGroup;
 			children = (
-				01102CAF2B2E62170091B991 /* User Preferences */,
+				01102CAF2B2E62170091B991 /* User Defaults Storage */,
 				014FBCED2B2DF7E600487FB5 /* File Storage */,
 				014FBCEB2B2DF7E600487FB5 /* Keychain Storage */,
 				014FBCEA2B2DF7E600487FB5 /* StorageTests.swift */,
@@ -161,6 +163,7 @@
 				014FBCF22B2DF91800487FB5 /* StorageKit */,
 				014E66822B2DFE550047A108 /* StorageKit */,
 				01102CAD2B2E243A0091B991 /* StorageKit */,
+				01CF5CAC2B2F5D7D0052BCD3 /* StorageKit */,
 			);
 			productName = StorageKitTestApp;
 			productReference = 014FBCB92B2DF53400487FB5 /* StorageKitTestApp.app */;
@@ -213,7 +216,7 @@
 			);
 			mainGroup = 014FBCB02B2DF53400487FB5;
 			packageReferences = (
-				01102CAC2B2E243A0091B991 /* XCLocalSwiftPackageReference ".." */,
+				01CF5CAB2B2F5D7D0052BCD3 /* XCLocalSwiftPackageReference ".." */,
 			);
 			productRefGroup = 014FBCBA2B2DF53400487FB5 /* Products */;
 			projectDirPath = "";
@@ -259,7 +262,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				014FBCF12B2DF7E600487FB5 /* EncryptedFileStorageTests.swift in Sources */,
-				01102CB12B2E62550091B991 /* UserPreferencesTests.swift in Sources */,
+				01CF5CAA2B2F5CCF0052BCD3 /* UserDefaultsStorageTests.swift in Sources */,
 				01102CAB2B2E22F00091B991 /* KeychainStorageTests.swift in Sources */,
 				014FBCEF2B2DF7E600487FB5 /* StorageTests.swift in Sources */,
 			);
@@ -543,7 +546,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		01102CAC2B2E243A0091B991 /* XCLocalSwiftPackageReference ".." */ = {
+		01CF5CAB2B2F5D7D0052BCD3 /* XCLocalSwiftPackageReference ".." */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ..;
 		};
@@ -563,6 +566,10 @@
 			productName = StorageKit;
 		};
 		014FBCF22B2DF91800487FB5 /* StorageKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = StorageKit;
+		};
+		01CF5CAC2B2F5D7D0052BCD3 /* StorageKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = StorageKit;
 		};
