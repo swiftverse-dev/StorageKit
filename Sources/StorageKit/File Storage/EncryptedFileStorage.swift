@@ -7,7 +7,7 @@
 
 import Foundation
 
-public final class EncryptedFileStorage: Storage{
+open class EncryptedFileStorage: Storage{
     
     public enum Error: Swift.Error{
         case itemNotFound
@@ -20,9 +20,9 @@ public final class EncryptedFileStorage: Storage{
     private static let defaultFolder = Bundle(for: EncryptedFileStorage.self).bundleIdentifier ?? "" + ".encryptedFile.storage"
     
     private let fileManager = FileManager.default
-    private let folderURL: URL
-    private let writingOptions: Data.WritingOptions
-    private let readingOptions: Data.ReadingOptions
+    public let folderURL: URL
+    public let writingOptions: Data.WritingOptions
+    public let readingOptions: Data.ReadingOptions
     
     public init(
         root: URL? = nil,
