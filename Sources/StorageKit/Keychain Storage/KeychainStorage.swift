@@ -30,10 +30,14 @@ open class KeychainStorage: Storage{
         case .never: return LAContext()
             
         case .forInterval(let timeInterval):
-            let context = _context ?? LAContext()
-            context.touchIDAuthenticationAllowableReuseDuration = timeInterval
-            _context = context
-            return context
+            if let _context { return _context }
+            
+            let newContext = LAContext()
+            _context = newContext
+            newContext.reuse(for: timeInterval) { [weak self] _ in
+                self?._context = nil
+            }
+            return newContext
         }
     }
     

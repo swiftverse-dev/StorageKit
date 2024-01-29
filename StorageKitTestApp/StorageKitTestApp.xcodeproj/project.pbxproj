@@ -10,7 +10,6 @@
 		01102CAB2B2E22F00091B991 /* KeychainStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01102CAA2B2E22F00091B991 /* KeychainStorageTests.swift */; };
 		01102CAE2B2E243A0091B991 /* StorageKit in Frameworks */ = {isa = PBXBuildFile; productRef = 01102CAD2B2E243A0091B991 /* StorageKit */; };
 		014E66832B2DFE550047A108 /* StorageKit in Frameworks */ = {isa = PBXBuildFile; productRef = 014E66822B2DFE550047A108 /* StorageKit */; };
-		014FBCBD2B2DF53400487FB5 /* StorageKitTestAppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014FBCBC2B2DF53400487FB5 /* StorageKitTestAppApp.swift */; };
 		014FBCBF2B2DF53400487FB5 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014FBCBE2B2DF53400487FB5 /* ContentView.swift */; };
 		014FBCC12B2DF53600487FB5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 014FBCC02B2DF53600487FB5 /* Assets.xcassets */; };
 		014FBCC52B2DF53600487FB5 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 014FBCC42B2DF53600487FB5 /* Preview Assets.xcassets */; };
@@ -18,6 +17,7 @@
 		014FBCEF2B2DF7E600487FB5 /* StorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014FBCEA2B2DF7E600487FB5 /* StorageTests.swift */; };
 		014FBCF12B2DF7E600487FB5 /* EncryptedFileStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014FBCEE2B2DF7E600487FB5 /* EncryptedFileStorageTests.swift */; };
 		014FBCF32B2DF91800487FB5 /* StorageKit in Frameworks */ = {isa = PBXBuildFile; productRef = 014FBCF22B2DF91800487FB5 /* StorageKit */; };
+		01C83B472B68397100550E08 /* StorageKitTestApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01C83B462B68397100550E08 /* StorageKitTestApp.swift */; };
 		01CF5CAA2B2F5CCF0052BCD3 /* UserDefaultsStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01CF5CA92B2F5CCF0052BCD3 /* UserDefaultsStorageTests.swift */; };
 		01CF5CAD2B2F5D7D0052BCD3 /* StorageKit in Frameworks */ = {isa = PBXBuildFile; productRef = 01CF5CAC2B2F5D7D0052BCD3 /* StorageKit */; };
 /* End PBXBuildFile section */
@@ -35,7 +35,6 @@
 /* Begin PBXFileReference section */
 		01102CAA2B2E22F00091B991 /* KeychainStorageTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeychainStorageTests.swift; sourceTree = "<group>"; };
 		014FBCB92B2DF53400487FB5 /* StorageKitTestApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StorageKitTestApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		014FBCBC2B2DF53400487FB5 /* StorageKitTestAppApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageKitTestAppApp.swift; sourceTree = "<group>"; };
 		014FBCBE2B2DF53400487FB5 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		014FBCC02B2DF53600487FB5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		014FBCC22B2DF53600487FB5 /* StorageKitTestApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = StorageKitTestApp.entitlements; sourceTree = "<group>"; };
@@ -43,6 +42,7 @@
 		014FBCCA2B2DF53700487FB5 /* StorageKitTestAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StorageKitTestAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		014FBCEA2B2DF7E600487FB5 /* StorageTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StorageTests.swift; sourceTree = "<group>"; };
 		014FBCEE2B2DF7E600487FB5 /* EncryptedFileStorageTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EncryptedFileStorageTests.swift; sourceTree = "<group>"; };
+		01C83B462B68397100550E08 /* StorageKitTestApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StorageKitTestApp.swift; sourceTree = "<group>"; };
 		01CF5CA92B2F5CCF0052BCD3 /* UserDefaultsStorageTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserDefaultsStorageTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -98,7 +98,7 @@
 		014FBCBB2B2DF53400487FB5 /* StorageKitTestApp */ = {
 			isa = PBXGroup;
 			children = (
-				014FBCBC2B2DF53400487FB5 /* StorageKitTestAppApp.swift */,
+				01C83B462B68397100550E08 /* StorageKitTestApp.swift */,
 				014FBCBE2B2DF53400487FB5 /* ContentView.swift */,
 				014FBCC02B2DF53600487FB5 /* Assets.xcassets */,
 				014FBCC22B2DF53600487FB5 /* StorageKitTestApp.entitlements */,
@@ -253,7 +253,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				014FBCBF2B2DF53400487FB5 /* ContentView.swift in Sources */,
-				014FBCBD2B2DF53400487FB5 /* StorageKitTestAppApp.swift in Sources */,
+				01C83B472B68397100550E08 /* StorageKitTestApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
