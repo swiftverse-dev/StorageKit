@@ -12,7 +12,7 @@ enum KeychainOperation{
     static func addItem(using query: CFDictionary) throws{
         let status = SecItemAdd(query, nil)
         
-        if let err = KeychainStorageError(from: status){
+        if let err = KeychainStorage.Error(from: status){
             throw err
         }
     }
@@ -21,12 +21,12 @@ enum KeychainOperation{
         var ref: AnyObject?
         let status = SecItemCopyMatching(query, &ref)
         
-        if let err = KeychainStorageError(from: status){
+        if let err = KeychainStorage.Error(from: status){
             throw err
         }
         
         guard let data = ref as? Data else{
-            throw KeychainStorageError.itemNotFound
+            throw KeychainStorage.Error.itemNotFound
         }
         
         return data
@@ -36,12 +36,12 @@ enum KeychainOperation{
         var ref: AnyObject?
         let status = SecItemCopyMatching(query, &ref)
         
-        if let err = KeychainStorageError(from: status){
+        if let err = KeychainStorage.Error(from: status){
             throw err
         }
         
         guard let items = ref as? [[String: Any]] else{
-            throw KeychainStorageError.itemNotFound
+            throw KeychainStorage.Error.itemNotFound
         }
         
         return items
@@ -50,7 +50,7 @@ enum KeychainOperation{
     static func deleteItem(using query: CFDictionary) -> Bool{
         let status = SecItemDelete(query)
         
-        if KeychainStorageError(from: status) != nil{
+        if KeychainStorage.Error(from: status) != nil{
             return false
         }
         

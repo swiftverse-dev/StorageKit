@@ -8,7 +8,7 @@
 import Foundation
 import LocalAuthentication
 
-public final class KeychainBiometricStorage: KeychainDataStorage{
+public final class KeychainBiometricStorage: KeychainStorage{
     public enum AccessControl {
         case passcode
         case passcodeOrAnyBiometry
@@ -27,11 +27,16 @@ public final class KeychainBiometricStorage: KeychainDataStorage{
     
     private static let defaultStoreId = "default.biometric.storage"
     public static let `default` = KeychainBiometricStorage(storeId: defaultStoreId)
+    public var reuseContextMode: KeychainStorage.ReuseContextMode {
+        get { super.reuseContext }
+        set { super.reuseContext = newValue }
+    }
     
     public init(
         storeId: String,
         accessControl: AccessControl = .passcodeOrAnyBiometry ,
         policy: LAPolicy = .deviceOwnerAuthentication,
+        reuseContextMode: KeychainStorage.ReuseContextMode = .never,
         promptMessage: String? = nil
     ){
         super.init(
@@ -42,5 +47,6 @@ public final class KeychainBiometricStorage: KeychainDataStorage{
             itemClass: kSecClassInternetPassword
         )
         self.promptMessage = promptMessage
+        self.reuseContext = reuseContextMode
     }
 }

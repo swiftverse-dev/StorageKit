@@ -9,7 +9,7 @@ import XCTest
 import StorageKit
 
 final class KeychainStorageTests: XCTestCase, StorageTests {
-    typealias Error = KeychainStorageError
+    typealias Error = KeychainStorage.Error
     
     override class func setUp() {
         super.setUp()
@@ -102,7 +102,7 @@ final class KeychainStorageTests: XCTestCase, StorageTests {
 private extension KeychainStorageTests{
     var someTag: String{ "someTag" }
     
-    func makeSUT(storeId: String = "test.keychain.storage") -> KeychainDataStorage{
+    func makeSUT(storeId: String = "test.keychain.storage") -> KeychainStorage {
         let sut = Self.makeSUT(storeId: storeId)
         addTeardownBlock {
             sut.clear()
@@ -110,7 +110,7 @@ private extension KeychainStorageTests{
         return sut
     }
     
-    static func makeSUT(storeId: String = "test.keychain.storage") -> KeychainDataStorage {
-        return KeychainDataStorage(storeId: storeId, protection: .whenUnlocked, itemClass: kSecClassGenericPassword)
+    static func makeSUT(storeId: String = "test.keychain.storage") -> KeychainStorage {
+        return KeychainStorage(storeId: storeId, protection: .whenUnlocked, itemClass: kSecClassGenericPassword)
     }
 }

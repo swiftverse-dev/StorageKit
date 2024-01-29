@@ -1,5 +1,5 @@
 //
-//  CFDictionary+KeychainDataStorage.swift.swift
+//  CFDictionary+KeychainStorage.swift.swift
 //  StorageKit
 //
 //  Created by Lorenzo Limoli on 16/11/22.
@@ -13,7 +13,7 @@ extension CFDictionary{
         tag: String,
         itemClass: CFString,
         context: LAContext,
-        protection: KeychainStorageProtection,
+        protection: KeychainStorage.Protection,
         accessControlFlags: SecAccessControlCreateFlags,
         policy: LAPolicy?
     ) throws -> CFDictionary{
@@ -39,7 +39,7 @@ extension CFDictionary{
         matchLimit: CFString = kSecMatchLimitOne,
         itemClass: CFString,
         context: LAContext,
-        protection: KeychainStorageProtection,
+        protection: KeychainStorage.Protection,
         accessControlFlags: SecAccessControlCreateFlags,
         policy: LAPolicy?,
         returnAttributes: Bool = false,
@@ -82,7 +82,7 @@ private extension CFDictionary{
     static func addAccessControl(
         to query: inout [String: Any],
         context: LAContext,
-        protection: KeychainStorageProtection,
+        protection: KeychainStorage.Protection,
         accessControlFlags: SecAccessControlCreateFlags,
         policy: LAPolicy?
     ) throws{
@@ -94,7 +94,7 @@ private extension CFDictionary{
         )
         
         guard context.canEvaluatePolicy(policy) else {
-            throw policy == .deviceOwnerAuthentication ? KeychainStorageError.passcodeDisabled : .biometryDisabled
+            throw policy == .deviceOwnerAuthentication ? KeychainStorage.Error.passcodeDisabled : .biometryDisabled
         }
         
         query[kSecUseAuthenticationContext as String] = context

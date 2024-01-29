@@ -1,5 +1,5 @@
 //
-//  KeychainDataStorage.swift
+//  KeychainStorage.swift
 //  StorageKit
 //
 //  Created by Lorenzo Limoli on 16/11/22.
@@ -8,34 +8,38 @@
 import Foundation
 import LocalAuthentication
 
-open class KeychainDataStorage: Storage{
+open class KeychainStorage: Storage{
     public typealias AccessControl = SecAccessControlCreateFlags
     
     public let storeId: String
-    public let protection: KeychainStorageProtection
+    public let protection: KeychainStorage.Protection
     public let accessControl: AccessControl
     public let policy: LAPolicy?
-    public var reuseContext = false
     public var promptMessage: String?
+    var reuseContext = ReuseContextMode.never
     
     private let itemClass: CFString
     private var _context: LAContext?
     private var context: LAContext {
-        if !reuseContext {
-            _context = nil
-            return LAContext()
+        switch reuseContext {
+        case .always:
+            let context = _context ?? LAContext()
+            _context = context
+            return context
+            
+        case .never: return LAContext()
+            
+        case .forInterval(let timeInterval):
+            let context = _context ?? LAContext()
+            context.touchIDAuthenticationAllowableReuseDuration = timeInterval
+            _context = context
+            return context
         }
-        
-        if let _context { return _context }
-        
-        let context = LAContext()
-        _context = context
-        return context
     }
     
     public init(
         storeId: String,
-        protection: KeychainStorageProtection,
+        protection: KeychainStorage.Protection,
         accessControl: AccessControl = [],
         policy: LAPolicy? = nil,
         itemClass: CFString = kSecClassGenericPassword
@@ -49,7 +53,7 @@ open class KeychainDataStorage: Storage{
 }
 
 // MARK: Save Operations
-extension KeychainDataStorage{
+extension KeychainStorage{
     public func save(_ data: Data, withTag tag: String) throws{
         deleteItem(withTag: tag)
         
@@ -70,7 +74,7 @@ extension KeychainDataStorage{
     
     public func save<T: Encodable>(_ object: T, withTag tag: String) throws{
         guard let encodedObject = try? JSONEncoder().encode(object) else{
-            throw KeychainStorageError.encodeFailure
+            throw KeychainStorage.Error.encodeFailure
         }
         
         try save(encodedObject, withTag: tag)
@@ -78,7 +82,7 @@ extension KeychainDataStorage{
 }
 
 // MARK: Load Operations
-extension KeychainDataStorage{
+extension KeychainStorage{
     public func loadData(withTag tag: String) throws -> Data{
         let tag = map(tag: tag)
         
@@ -98,7 +102,7 @@ extension KeychainDataStorage{
     public func loadObject<T: Decodable>(withTag tag: String) throws -> T{
         let retrievedData = try loadData(withTag: tag)
         guard let obj = try? JSONDecoder().decode(T.self, from: retrievedData) else {
-            throw KeychainStorageError.decodeFailure
+            throw KeychainStorage.Error.decodeFailure
         }
         
         return obj
@@ -106,7 +110,7 @@ extension KeychainDataStorage{
 }
 
 // MARK: Delete Operations
-extension KeychainDataStorage{
+extension KeychainStorage{
     @discardableResult
     public func deleteItem(withTag tag: String) -> Bool{
         let tag = map(tag: tag)
@@ -151,7 +155,7 @@ extension KeychainDataStorage{
     }
 }
 
-private extension KeychainDataStorage{
+private extension KeychainStorage{
     func map(tag: String) -> String{
         "\(storeId).\(tag)"
     }
