@@ -49,4 +49,10 @@ public final class KeychainBiometricStorage: KeychainStorage{
         self.promptMessage = promptMessage
         self.reuseContext = reuseContextMode
     }
+    
+    @discardableResult
+    public func reusingContext(_ mode: KeychainStorage.ReuseContextMode) -> Self {
+        reuseContextMode = mode
+        return self
+    }
 }
