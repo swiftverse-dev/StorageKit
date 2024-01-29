@@ -38,9 +38,13 @@ extension CFDictionary{
         tag: String? = nil,
         matchLimit: CFString = kSecMatchLimitOne,
         itemClass: CFString,
+        context: LAContext,
+        protection: KeychainStorageProtection,
+        accessControlFlags: SecAccessControlCreateFlags,
+        policy: LAPolicy?,
         returnAttributes: Bool = false,
         promptMessage: String? = nil
-    ) -> CFDictionary{
+    ) throws -> CFDictionary{
         var query = [
             kSecClass as String                     : itemClass,
             kSecReturnData as String                : true,
@@ -52,6 +56,14 @@ extension CFDictionary{
         if let tag {
             query[kSecAttrAccount as String] = tag
         }
+        
+        try addAccessControl(
+            to: &query,
+            context: context,
+            protection: protection,
+            accessControlFlags: accessControlFlags,
+            policy: policy
+        )
         
         return query as CFDictionary
     }

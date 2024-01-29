@@ -82,7 +82,15 @@ extension KeychainDataStorage{
     public func loadData(withTag tag: String) throws -> Data{
         let tag = map(tag: tag)
         
-        let query = CFDictionary.createQueryForDataRetrieve(tag: tag, itemClass: itemClass, promptMessage: promptMessage)
+        let query = try CFDictionary.createQueryForDataRetrieve(
+            tag: tag,
+            itemClass: itemClass,
+            context: context,
+            protection: protection,
+            accessControlFlags: accessControl,
+            policy: policy,
+            promptMessage: promptMessage
+        )
         
         return try KeychainOperation.loadItem(using: query)
     }
@@ -113,19 +121,24 @@ extension KeychainDataStorage{
     
     @discardableResult
     public func clear() -> Bool {
-        let getItemsQuery = CFDictionary.createQueryForDataRetrieve(
+        let optItemsQuery = try? CFDictionary.createQueryForDataRetrieve(
             matchLimit: kSecMatchLimitAll,
             itemClass: itemClass,
+            context: context,
+            protection: protection,
+            accessControlFlags: accessControl,
+            policy: policy,
             returnAttributes: true,
             promptMessage: "Please Authenticate to delete items into keychain"
         )
         
         // Search all the items in the keychain
-        guard let items = try? KeychainOperation.loadAttributedItems(using: getItemsQuery) else { return false }
+        guard let getItemsQuery = optItemsQuery,
+            let items = try? KeychainOperation.loadAttributedItems(using: getItemsQuery) else { return false }
         
-        return items
+        let deletedItemsSuccess: [Bool] = items
             .compactMap{
-                // Filter the items starting with a prefix equal to `storeIs` property
+                // Filter the items starting with a prefix equal to `storeId` property
                 guard let itemTag = $0[kSecAttrAccount as String] as? String,
                           itemTag.starts(with: storeId) else  {
                     return nil
@@ -133,7 +146,8 @@ extension KeychainDataStorage{
                 // Delete the single Item
                 return deleteItem(withNoPrefixTag: itemTag)
             }
-            .allSatisfy{ $0 }
+        
+        return deletedItemsSuccess.isEmpty ? false : deletedItemsSuccess.allSatisfy{ $0 }
     }
 }
 

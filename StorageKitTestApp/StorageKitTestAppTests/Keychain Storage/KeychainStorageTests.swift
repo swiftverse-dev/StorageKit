@@ -11,6 +11,11 @@ import StorageKit
 final class KeychainStorageTests: XCTestCase, StorageTests {
     typealias Error = KeychainStorageError
     
+    override class func setUp() {
+        super.setUp()
+        Self.makeSUT().clear()
+    }
+    
     func test_saveData_succeeds() throws{
         let someTag = someTag
         let sut = makeSUT()
@@ -98,10 +103,14 @@ private extension KeychainStorageTests{
     var someTag: String{ "someTag" }
     
     func makeSUT(storeId: String = "test.keychain.storage") -> KeychainDataStorage{
-        let sut = KeychainDataStorage(storeId: storeId, protection: .whenUnlocked, itemClass: kSecClassInternetPassword)
+        let sut = Self.makeSUT(storeId: storeId)
         addTeardownBlock {
             sut.clear()
         }
         return sut
+    }
+    
+    static func makeSUT(storeId: String = "test.keychain.storage") -> KeychainDataStorage {
+        return KeychainDataStorage(storeId: storeId, protection: .whenUnlocked, itemClass: kSecClassGenericPassword)
     }
 }
