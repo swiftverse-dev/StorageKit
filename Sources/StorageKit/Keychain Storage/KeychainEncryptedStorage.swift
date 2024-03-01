@@ -13,11 +13,10 @@ public final class KeychainEncryptedStorage: KeychainStorage{
     private static let defaultStoreId = "default.encrypted.storage"
     public static let `default` = KeychainEncryptedStorage(storeId: defaultStoreId)
     
-    public init(storeId: String, policy: LAPolicy? = .deviceOwnerAuthentication){
+    public init(storeId: String, protection: KeychainStorage.Protection = .whenThisDevicePasscodeSet){
         super.init(
             storeId: storeId,
-            protection: .whenThisDevicePasscodeSet,
-            policy: policy,
+            protection: protection,
             itemClass: kSecClassGenericPassword
         )
         self.promptMessage = promptMessage
