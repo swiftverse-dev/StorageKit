@@ -10,18 +10,33 @@ import Foundation
 public extension Keystore {
 
     struct KeyType {
-        let type: CFString
+        public let type: CFString
+        
+        public init(type: CFString) {
+            self.type = type
+        }
     }
     
     struct KeyTypeGeneration {
-        let type: CFString
-        let bitSize: Int
+        public let type: CFString
+        public let bitSize: Int
+        
+        public init(type: CFString, bitSize: Int) {
+            self.type = type
+            self.bitSize = bitSize
+        }
     }
     
     struct KeyTypeParseMode {
-        let type: CFString
-        let isPrivateKey: Bool
-        let data: Data
+        public let type: CFString
+        public let isPrivateKey: Bool
+        public let data: Data
+        
+        public init(type: CFString, isPrivateKey: Bool, data: Data) {
+            self.type = type
+            self.isPrivateKey = isPrivateKey
+            self.data = data
+        }
     }
 }
 
