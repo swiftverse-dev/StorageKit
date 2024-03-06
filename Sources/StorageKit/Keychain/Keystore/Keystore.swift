@@ -123,9 +123,14 @@ public extension Keystore {
         
         return try Operation.generatePrivateKey(using: query)
     }
+    
     static func keyFrom(_ keyType: KeyTypeParseMode) throws -> SecKey {
         let keyParsingQuery = Query.createQueryForKeyParsing(keyType)
         return try Operation.createKeyFromData(keyType.data, using: keyParsingQuery)
+    }
+    
+    static func extractPublicKey(from privateKey: SecKey) throws -> SecKey {
+        try Operation.extractPublicKey(from: privateKey)
     }
 }
 
