@@ -16,7 +16,7 @@ public extension Keychain {
         case whenThisDeviceUnlocked
         case afterThisDeviceFirstUnlock
         
-        var type: CFString{
+        public var type: CFString{
             switch self {
             case .whenUnlocked: return kSecAttrAccessibleWhenUnlocked
             case .afterFirstUnlock: return kSecAttrAccessibleAfterFirstUnlock
