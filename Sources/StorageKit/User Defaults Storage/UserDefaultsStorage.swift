@@ -22,11 +22,11 @@ extension UserDefaults: Storage {
 }
 
 public extension UserDefaults {
-    public func save(_ data: Data, withTag tag: String) throws {
+    func save(_ data: Data, withTag tag: String) throws {
         set(data, forKey: tag)
     }
     
-    public func save<T>(_ object: T, withTag tag: String) throws where T : Encodable {
+    func save<T>(_ object: T, withTag tag: String) throws where T : Encodable {
         let data = try? encoder.encode(object)
         let json = try data.or(throw: StorageError.encodeFailure)
         set(json, forKey: tag)
@@ -34,12 +34,12 @@ public extension UserDefaults {
 }
 
 public extension UserDefaults {
-    public func loadData(withTag tag: String) throws -> Data {
+    func loadData(withTag tag: String) throws -> Data {
         try data(forKey: tag)
             .or(throw: StorageError.itemNotFound)
     }
     
-    public func loadObject<T>(withTag tag: String) throws -> T where T : Decodable {
+    func loadObject<T>(withTag tag: String) throws -> T where T : Decodable {
         let json = try loadData(withTag: tag)
         let object = try? decoder.decode(T.self, from: json)
         return try object.or(throw: StorageError.decodeFailure)
@@ -48,7 +48,7 @@ public extension UserDefaults {
 
 public extension UserDefaults {
     @discardableResult
-    public func deleteItem(withTag tag: String) -> Bool {
+    func deleteItem(withTag tag: String) -> Bool {
         let notExists = object(forKey: tag) == nil
         if notExists { return false }
         
@@ -57,7 +57,7 @@ public extension UserDefaults {
     }
     
     @discardableResult
-    public func clear() -> Bool {
+    func clear() -> Bool {
         let keys = dictionaryRepresentation().keys
         let keyCount = keys.count
         

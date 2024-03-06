@@ -17,6 +17,7 @@
 		014FBCEF2B2DF7E600487FB5 /* StorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014FBCEA2B2DF7E600487FB5 /* StorageTests.swift */; };
 		014FBCF12B2DF7E600487FB5 /* EncryptedFileStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014FBCEE2B2DF7E600487FB5 /* EncryptedFileStorageTests.swift */; };
 		014FBCF32B2DF91800487FB5 /* StorageKit in Frameworks */ = {isa = PBXBuildFile; productRef = 014FBCF22B2DF91800487FB5 /* StorageKit */; };
+		01AA50952B98F7F5007D9972 /* StorageKit in Frameworks */ = {isa = PBXBuildFile; productRef = 01AA50942B98F7F5007D9972 /* StorageKit */; };
 		01C83B472B68397100550E08 /* StorageKitTestApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01C83B462B68397100550E08 /* StorageKitTestApp.swift */; };
 		01CF5CAA2B2F5CCF0052BCD3 /* UserDefaultsStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01CF5CA92B2F5CCF0052BCD3 /* UserDefaultsStorageTests.swift */; };
 		01CF5CAD2B2F5D7D0052BCD3 /* StorageKit in Frameworks */ = {isa = PBXBuildFile; productRef = 01CF5CAC2B2F5D7D0052BCD3 /* StorageKit */; };
@@ -56,6 +57,7 @@
 				01CF5CAD2B2F5D7D0052BCD3 /* StorageKit in Frameworks */,
 				014E66832B2DFE550047A108 /* StorageKit in Frameworks */,
 				01102CAE2B2E243A0091B991 /* StorageKit in Frameworks */,
+				01AA50952B98F7F5007D9972 /* StorageKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -164,6 +166,7 @@
 				014E66822B2DFE550047A108 /* StorageKit */,
 				01102CAD2B2E243A0091B991 /* StorageKit */,
 				01CF5CAC2B2F5D7D0052BCD3 /* StorageKit */,
+				01AA50942B98F7F5007D9972 /* StorageKit */,
 			);
 			productName = StorageKitTestApp;
 			productReference = 014FBCB92B2DF53400487FB5 /* StorageKitTestApp.app */;
@@ -216,7 +219,7 @@
 			);
 			mainGroup = 014FBCB02B2DF53400487FB5;
 			packageReferences = (
-				01CF5CAB2B2F5D7D0052BCD3 /* XCLocalSwiftPackageReference ".." */,
+				01AA50932B98F7F5007D9972 /* XCLocalSwiftPackageReference ".." */,
 			);
 			productRefGroup = 014FBCBA2B2DF53400487FB5 /* Products */;
 			projectDirPath = "";
@@ -546,7 +549,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		01CF5CAB2B2F5D7D0052BCD3 /* XCLocalSwiftPackageReference ".." */ = {
+		01AA50932B98F7F5007D9972 /* XCLocalSwiftPackageReference ".." */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ..;
 		};
@@ -566,6 +569,10 @@
 			productName = StorageKit;
 		};
 		014FBCF22B2DF91800487FB5 /* StorageKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = StorageKit;
+		};
+		01AA50942B98F7F5007D9972 /* StorageKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = StorageKit;
 		};

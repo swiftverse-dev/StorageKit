@@ -1,5 +1,5 @@
 //
-//  KeychainOperation.swift
+//  Keychain+Operation.swift
 //  StorageKit
 //
 //  Created by Lorenzo Limoli on 16/11/22.
@@ -7,12 +7,16 @@
 
 import Foundation
 
-enum KeychainOperation{
+extension Keychain {
+    enum Operation {}
+}
+
+extension Keychain.Operation{
     
     static func addItem(using query: CFDictionary) throws{
         let status = SecItemAdd(query, nil)
         
-        if let err = KeychainStorage.Error(from: status){
+        if let err = Keychain.Error(from: status){
             throw err
         }
     }
@@ -21,12 +25,12 @@ enum KeychainOperation{
         var ref: AnyObject?
         let status = SecItemCopyMatching(query, &ref)
         
-        if let err = KeychainStorage.Error(from: status){
+        if let err = Keychain.Error(from: status){
             throw err
         }
         
         guard let data = ref as? Data else{
-            throw KeychainStorage.Error.itemNotFound
+            throw Keychain.Error.itemNotFound
         }
         
         return data
@@ -36,12 +40,12 @@ enum KeychainOperation{
         var ref: AnyObject?
         let status = SecItemCopyMatching(query, &ref)
         
-        if let err = KeychainStorage.Error(from: status){
+        if let err = Keychain.Error(from: status){
             throw err
         }
         
         guard let items = ref as? [[String: Any]] else{
-            throw KeychainStorage.Error.itemNotFound
+            throw Keychain.Error.itemNotFound
         }
         
         return items
@@ -50,7 +54,7 @@ enum KeychainOperation{
     static func deleteItem(using query: CFDictionary) -> Bool{
         let status = SecItemDelete(query)
         
-        if KeychainStorage.Error(from: status) != nil{
+        if Keychain.Error(from: status) != nil{
             return false
         }
         

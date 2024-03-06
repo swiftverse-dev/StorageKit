@@ -1,5 +1,5 @@
 //
-//  CFDictionary+KeychainStorage.swift.swift
+//  Keychain+Query.swift.swift
 //  StorageKit
 //
 //  Created by Lorenzo Limoli on 16/11/22.
@@ -7,13 +7,17 @@
 
 import LocalAuthentication
 
-extension CFDictionary{
+extension Keychain {
+    enum Query {}
+}
+
+extension Keychain.Query {
     static func createQueryForDataStore(
         _ data: Data,
         tag: String,
         itemClass: CFString,
         context: LAContext,
-        protection: KeychainStorage.Protection,
+        protection: Keychain.Protection,
         accessControlFlags: SecAccessControlCreateFlags,
         policy: LAPolicy?
     ) throws -> CFDictionary{
@@ -39,7 +43,7 @@ extension CFDictionary{
         matchLimit: CFString = kSecMatchLimitOne,
         itemClass: CFString,
         context: LAContext,
-        protection: KeychainStorage.Protection,
+        protection: Keychain.Protection,
         accessControlFlags: SecAccessControlCreateFlags,
         policy: LAPolicy?,
         returnAttributes: Bool = false,
@@ -48,11 +52,21 @@ extension CFDictionary{
         var query = [
             kSecClass as String                     : itemClass,
             kSecReturnData as String                : true,
-            kSecUseOperationPrompt as String        : promptMessage ?? "Please authenticate",
             kSecMatchLimit as String                : matchLimit,
-            kSecReturnAttributes as String          : returnAttributes ? kCFBooleanTrue : kCFBooleanFalse,
+            kSecReturnAttributes as String          : returnAttributes,
         ] as [String: Any]
         
+        #if TARGET_OS_IPHONE
+        if let promptMessage {
+            query[kSecUseOperationPrompt as String] = promptMessage
+        }
+        #else
+        if let promptMessage {
+            query[kSecUseAuthenticationContext as String] = promptMessage
+            context.localizedReason = promptMessage
+        }
+        #endif
+                
         if let tag {
             query[kSecAttrAccount as String] = tag
         }
@@ -77,12 +91,12 @@ extension CFDictionary{
 }
 
 
-private extension CFDictionary{
+private extension Keychain.Query{
  
     static func addAccessControl(
         to query: inout [String: Any],
         context: LAContext,
-        protection: KeychainStorage.Protection,
+        protection: Keychain.Protection,
         accessControlFlags: SecAccessControlCreateFlags,
         policy: LAPolicy?
     ) throws{
@@ -94,7 +108,7 @@ private extension CFDictionary{
         )
         
         guard context.canEvaluatePolicy(policy) else {
-            throw policy == .deviceOwnerAuthentication ? KeychainStorage.Error.passcodeDisabled : .biometryDisabled
+            throw policy == .deviceOwnerAuthentication ? Keychain.Error.passcodeDisabled : .biometryDisabled
         }
         
         query[kSecUseAuthenticationContext as String] = context

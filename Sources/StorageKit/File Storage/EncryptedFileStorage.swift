@@ -124,7 +124,7 @@ public extension EncryptedFileStorage{
     }
     
     @discardableResult
-    public func clear() -> Bool {
+    func clear() -> Bool {
         do {
             try fileManager.removeItem(at: folderURL)
             return true

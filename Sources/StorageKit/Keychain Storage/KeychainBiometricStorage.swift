@@ -8,7 +8,7 @@
 import Foundation
 import LocalAuthentication
 
-public final class KeychainBiometricStorage: KeychainStorage{
+public final class KeychainBiometricStorage: KeychainStorage {
     public enum AccessControl {
         case passcode
         case passcodeOrAnyBiometry
@@ -27,7 +27,7 @@ public final class KeychainBiometricStorage: KeychainStorage{
     
     private static let defaultStoreId = "default.biometric.storage"
     public static let `default` = KeychainBiometricStorage(storeId: defaultStoreId)
-    public var reuseContextMode: KeychainStorage.ReuseContextMode {
+    public var reuseContextMode: Keychain.ReuseContextMode {
         get { super.reuseContext }
         set { super.reuseContext = newValue }
     }
@@ -36,7 +36,7 @@ public final class KeychainBiometricStorage: KeychainStorage{
         storeId: String,
         accessControl: AccessControl = .passcodeOrAnyBiometry ,
         policy: LAPolicy = .deviceOwnerAuthentication,
-        reuseContextMode: KeychainStorage.ReuseContextMode = .never,
+        reuseContextMode: Keychain.ReuseContextMode = .never,
         promptMessage: String? = nil
     ){
         super.init(
@@ -51,7 +51,7 @@ public final class KeychainBiometricStorage: KeychainStorage{
     }
     
     @discardableResult
-    public func reusingContext(_ mode: KeychainStorage.ReuseContextMode) -> Self {
+    public func reusingContext(_ mode: Keychain.ReuseContextMode) -> Self {
         reuseContextMode = mode
         return self
     }

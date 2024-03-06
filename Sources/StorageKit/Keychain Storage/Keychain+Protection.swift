@@ -1,5 +1,5 @@
 //
-//  KeychainStorage+Protection.swift
+//  Keychain+Protection.swift
 //  StorageKit
 //
 //  Created by Lorenzo Limoli on 16/12/23.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-public extension KeychainStorage {
+public extension Keychain {
     enum Protection {
         case whenUnlocked
         case afterFirstUnlock
