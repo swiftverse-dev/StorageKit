@@ -91,7 +91,7 @@ extension Keychain.Query {
 }
 
 
-private extension Keychain.Query{
+extension Keychain.Query{
  
     static func addAccessControl(
         to query: inout [String: Any],
