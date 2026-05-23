@@ -3,27 +3,17 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 60;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		01102CAB2B2E22F00091B991 /* KeychainStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01102CAA2B2E22F00091B991 /* KeychainStorageTests.swift */; };
 		01102CAE2B2E243A0091B991 /* StorageKit in Frameworks */ = {isa = PBXBuildFile; productRef = 01102CAD2B2E243A0091B991 /* StorageKit */; };
-		014C69E12B99085E00CAAF63 /* KeystoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014C69E02B99085E00CAAF63 /* KeystoreTests.swift */; };
 		014C69E42B99087E00CAAF63 /* StorageKit in Frameworks */ = {isa = PBXBuildFile; productRef = 014C69E32B99087E00CAAF63 /* StorageKit */; };
 		014C69E72B99090500CAAF63 /* StorageKit in Frameworks */ = {isa = PBXBuildFile; productRef = 014C69E62B99090500CAAF63 /* StorageKit */; };
-		014C69EA2B9909C700CAAF63 /* XCTestCase+trackForMemoryLeaks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014C69E92B9909C700CAAF63 /* XCTestCase+trackForMemoryLeaks.swift */; };
 		014E66832B2DFE550047A108 /* StorageKit in Frameworks */ = {isa = PBXBuildFile; productRef = 014E66822B2DFE550047A108 /* StorageKit */; };
-		014FBCBF2B2DF53400487FB5 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014FBCBE2B2DF53400487FB5 /* ContentView.swift */; };
-		014FBCC12B2DF53600487FB5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 014FBCC02B2DF53600487FB5 /* Assets.xcassets */; };
-		014FBCC52B2DF53600487FB5 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 014FBCC42B2DF53600487FB5 /* Preview Assets.xcassets */; };
 		014FBCE92B2DF7C000487FB5 /* StorageKit in Frameworks */ = {isa = PBXBuildFile; productRef = 014FBCE82B2DF7C000487FB5 /* StorageKit */; };
-		014FBCEF2B2DF7E600487FB5 /* StorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014FBCEA2B2DF7E600487FB5 /* StorageTests.swift */; };
-		014FBCF12B2DF7E600487FB5 /* EncryptedFileStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014FBCEE2B2DF7E600487FB5 /* EncryptedFileStorageTests.swift */; };
 		014FBCF32B2DF91800487FB5 /* StorageKit in Frameworks */ = {isa = PBXBuildFile; productRef = 014FBCF22B2DF91800487FB5 /* StorageKit */; };
 		01AA50952B98F7F5007D9972 /* StorageKit in Frameworks */ = {isa = PBXBuildFile; productRef = 01AA50942B98F7F5007D9972 /* StorageKit */; };
-		01C83B472B68397100550E08 /* StorageKitTestApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01C83B462B68397100550E08 /* StorageKitTestApp.swift */; };
-		01CF5CAA2B2F5CCF0052BCD3 /* UserDefaultsStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01CF5CA92B2F5CCF0052BCD3 /* UserDefaultsStorageTests.swift */; };
 		01CF5CAD2B2F5D7D0052BCD3 /* StorageKit in Frameworks */ = {isa = PBXBuildFile; productRef = 01CF5CAC2B2F5D7D0052BCD3 /* StorageKit */; };
 /* End PBXBuildFile section */
 
@@ -38,20 +28,14 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		01102CAA2B2E22F00091B991 /* KeychainStorageTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeychainStorageTests.swift; sourceTree = "<group>"; };
-		014C69E02B99085E00CAAF63 /* KeystoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeystoreTests.swift; sourceTree = "<group>"; };
-		014C69E92B9909C700CAAF63 /* XCTestCase+trackForMemoryLeaks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestCase+trackForMemoryLeaks.swift"; sourceTree = "<group>"; };
 		014FBCB92B2DF53400487FB5 /* StorageKitTestApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StorageKitTestApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		014FBCBE2B2DF53400487FB5 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		014FBCC02B2DF53600487FB5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		014FBCC22B2DF53600487FB5 /* StorageKitTestApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = StorageKitTestApp.entitlements; sourceTree = "<group>"; };
-		014FBCC42B2DF53600487FB5 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		014FBCCA2B2DF53700487FB5 /* StorageKitTestAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StorageKitTestAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		014FBCEA2B2DF7E600487FB5 /* StorageTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StorageTests.swift; sourceTree = "<group>"; };
-		014FBCEE2B2DF7E600487FB5 /* EncryptedFileStorageTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EncryptedFileStorageTests.swift; sourceTree = "<group>"; };
-		01C83B462B68397100550E08 /* StorageKitTestApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StorageKitTestApp.swift; sourceTree = "<group>"; };
-		01CF5CA92B2F5CCF0052BCD3 /* UserDefaultsStorageTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserDefaultsStorageTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		ED0BBA162FC2672500D1C790 /* StorageKitTestApp */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = StorageKitTestApp; sourceTree = "<group>"; };
+		ED0BBA252FC2673100D1C790 /* StorageKitTestAppTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = StorageKitTestAppTests; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		014FBCB62B2DF53400487FB5 /* Frameworks */ = {
@@ -79,27 +63,11 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		01102CAF2B2E62170091B991 /* User Defaults Storage */ = {
-			isa = PBXGroup;
-			children = (
-				01CF5CA92B2F5CCF0052BCD3 /* UserDefaultsStorageTests.swift */,
-			);
-			path = "User Defaults Storage";
-			sourceTree = "<group>";
-		};
-		014C69E82B9909BA00CAAF63 /* Helpers */ = {
-			isa = PBXGroup;
-			children = (
-				014C69E92B9909C700CAAF63 /* XCTestCase+trackForMemoryLeaks.swift */,
-			);
-			path = Helpers;
-			sourceTree = "<group>";
-		};
 		014FBCB02B2DF53400487FB5 = {
 			isa = PBXGroup;
 			children = (
-				014FBCBB2B2DF53400487FB5 /* StorageKitTestApp */,
-				014FBCCD2B2DF53700487FB5 /* StorageKitTestAppTests */,
+				ED0BBA162FC2672500D1C790 /* StorageKitTestApp */,
+				ED0BBA252FC2673100D1C790 /* StorageKitTestAppTests */,
 				014FBCBA2B2DF53400487FB5 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -111,55 +79,6 @@
 				014FBCCA2B2DF53700487FB5 /* StorageKitTestAppTests.xctest */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		014FBCBB2B2DF53400487FB5 /* StorageKitTestApp */ = {
-			isa = PBXGroup;
-			children = (
-				01C83B462B68397100550E08 /* StorageKitTestApp.swift */,
-				014FBCBE2B2DF53400487FB5 /* ContentView.swift */,
-				014FBCC02B2DF53600487FB5 /* Assets.xcassets */,
-				014FBCC22B2DF53600487FB5 /* StorageKitTestApp.entitlements */,
-				014FBCC32B2DF53600487FB5 /* Preview Content */,
-			);
-			path = StorageKitTestApp;
-			sourceTree = "<group>";
-		};
-		014FBCC32B2DF53600487FB5 /* Preview Content */ = {
-			isa = PBXGroup;
-			children = (
-				014FBCC42B2DF53600487FB5 /* Preview Assets.xcassets */,
-			);
-			path = "Preview Content";
-			sourceTree = "<group>";
-		};
-		014FBCCD2B2DF53700487FB5 /* StorageKitTestAppTests */ = {
-			isa = PBXGroup;
-			children = (
-				014C69E82B9909BA00CAAF63 /* Helpers */,
-				01102CAF2B2E62170091B991 /* User Defaults Storage */,
-				014FBCED2B2DF7E600487FB5 /* File Storage */,
-				014FBCEB2B2DF7E600487FB5 /* Keychain */,
-				014FBCEA2B2DF7E600487FB5 /* StorageTests.swift */,
-			);
-			path = StorageKitTestAppTests;
-			sourceTree = "<group>";
-		};
-		014FBCEB2B2DF7E600487FB5 /* Keychain */ = {
-			isa = PBXGroup;
-			children = (
-				01102CAA2B2E22F00091B991 /* KeychainStorageTests.swift */,
-				014C69E02B99085E00CAAF63 /* KeystoreTests.swift */,
-			);
-			path = Keychain;
-			sourceTree = "<group>";
-		};
-		014FBCED2B2DF7E600487FB5 /* File Storage */ = {
-			isa = PBXGroup;
-			children = (
-				014FBCEE2B2DF7E600487FB5 /* EncryptedFileStorageTests.swift */,
-			);
-			path = "File Storage";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -176,6 +95,9 @@
 			buildRules = (
 			);
 			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				ED0BBA162FC2672500D1C790 /* StorageKitTestApp */,
 			);
 			name = StorageKitTestApp;
 			packageProductDependencies = (
@@ -205,6 +127,9 @@
 			dependencies = (
 				014FBCCC2B2DF53700487FB5 /* PBXTargetDependency */,
 			);
+			fileSystemSynchronizedGroups = (
+				ED0BBA252FC2673100D1C790 /* StorageKitTestAppTests */,
+			);
 			name = StorageKitTestAppTests;
 			productName = StorageKitTestAppTests;
 			productReference = 014FBCCA2B2DF53700487FB5 /* StorageKitTestAppTests.xctest */;
@@ -218,7 +143,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1510;
-				LastUpgradeCheck = 1520;
+				LastUpgradeCheck = 2650;
 				TargetAttributes = {
 					014FBCB82B2DF53400487FB5 = {
 						CreatedOnToolsVersion = 15.1;
@@ -256,8 +181,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				014FBCC52B2DF53600487FB5 /* Preview Assets.xcassets in Resources */,
-				014FBCC12B2DF53600487FB5 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -275,8 +198,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				014FBCBF2B2DF53400487FB5 /* ContentView.swift in Sources */,
-				01C83B472B68397100550E08 /* StorageKitTestApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -284,12 +205,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				014C69EA2B9909C700CAAF63 /* XCTestCase+trackForMemoryLeaks.swift in Sources */,
-				014C69E12B99085E00CAAF63 /* KeystoreTests.swift in Sources */,
-				014FBCF12B2DF7E600487FB5 /* EncryptedFileStorageTests.swift in Sources */,
-				01CF5CAA2B2F5CCF0052BCD3 /* UserDefaultsStorageTests.swift in Sources */,
-				01102CAB2B2E22F00091B991 /* KeychainStorageTests.swift in Sources */,
-				014FBCEF2B2DF7E600487FB5 /* StorageTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -340,6 +255,7 @@
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = RD2JZ43A47;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -363,6 +279,7 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -404,6 +321,7 @@
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = RD2JZ43A47;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -420,6 +338,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 			};
 			name = Release;
@@ -434,7 +353,6 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"StorageKitTestApp/Preview Content\"";
-				DEVELOPMENT_TEAM = RD2JZ43A47;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -472,7 +390,6 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"StorageKitTestApp/Preview Content\"";
-				DEVELOPMENT_TEAM = RD2JZ43A47;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -503,12 +420,10 @@
 		014FBCE22B2DF53700487FB5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = RD2JZ43A47;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.switverse.StorageKitTestAppTests;
@@ -525,12 +440,10 @@
 		014FBCE32B2DF53700487FB5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = RD2JZ43A47;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.switverse.StorageKitTestAppTests;
