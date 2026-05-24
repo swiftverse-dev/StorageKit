@@ -59,7 +59,7 @@ final class KeystoreStaticTests: XCTestCase {
     }
 }
 
-private extension KeystoreStaticTests {
+extension KeystoreStaticTests {
 
     var validKeys: [Keystore.KeyTypeGeneration] {
         [.rsa(bitSize: 1024), .ecPrimeRandom(bitSize: 192)]
