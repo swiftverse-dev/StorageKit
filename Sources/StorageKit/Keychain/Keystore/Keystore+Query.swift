@@ -100,7 +100,7 @@ extension Keystore.Query {
             kSecAttrApplicationTag as String        : tag
         ] as [String: Any]
         
-        #if TARGET_OS_IPHONE
+        #if os(iOS)
         if let promptMessage {
             query[kSecUseOperationPrompt as String] = promptMessage
         }
