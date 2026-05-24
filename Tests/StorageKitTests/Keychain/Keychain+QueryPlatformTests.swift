@@ -61,7 +61,9 @@ final class KeychainQueryPlatformTests: XCTestCase {
         ) as! [String: Any]
 
         #if os(macOS)
-        XCTAssertNil(query[kSecUseOperationPrompt as String])
+        // `kSecUseOperationPrompt` is iOS-only and deprecated on macOS; the
+        // production code can't write it on this platform (compile-time #if).
+        // The macOS-arm contract is "set context.localizedReason"; check that.
         XCTAssertEqual(stub.localizedReason, "Please authenticate")
         #else
         XCTAssertEqual(query[kSecUseOperationPrompt as String] as? String, "Please authenticate")

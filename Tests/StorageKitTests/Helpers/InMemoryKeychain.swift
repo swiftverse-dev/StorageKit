@@ -106,7 +106,7 @@ final class InMemoryKeychain: KeychainPerforming {
     /// `kSecUseDataProtectionKeychain`, `kSecAttrAccessControl`) is present and
     /// equal on the stored item.
     private static func matches(stored: [String: Any], query: [String: Any]) -> Bool {
-        let ignored: Set<String> = [
+        var ignored: Set<String> = [
             kSecReturnData as String,
             kSecReturnAttributes as String,
             kSecReturnRef as String,
@@ -114,13 +114,19 @@ final class InMemoryKeychain: KeychainPerforming {
             kSecMatchLimit as String,
             kSecUseAuthenticationContext as String,
             kSecUseDataProtectionKeychain as String,
-            kSecUseOperationPrompt as String,
             kSecAttrAccessControl as String,
             kSecValueData as String,
             kSecPrivateKeyAttrs as String,
             kSecAttrKeySizeInBits as String,
             kSecAttrIsPermanent as String,
         ]
+        #if !os(macOS)
+        // `kSecUseOperationPrompt` is set by the production query builders
+        // only under `#if os(iOS)`, and is deprecated on macOS — skip it from
+        // the ignored set on macOS so we don't reference the deprecated symbol
+        // on a platform where it would never appear in a query.
+        ignored.insert(kSecUseOperationPrompt as String)
+        #endif
         for (key, value) in query where !ignored.contains(key) {
             guard let storedValue = stored[key] else { return false }
             if let s = value as? String, let r = storedValue as? String {
