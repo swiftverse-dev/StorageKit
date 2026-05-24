@@ -26,7 +26,10 @@ extension Keychain.Query {
             kSecAttrAccount as String               : tag,
             kSecValueData as String                 : data
         ]
-        
+        #if os(macOS)
+        query[kSecUseDataProtectionKeychain as String] = true
+        #endif
+
         try addAccessControl(
             to: &query,
             context: context,
@@ -55,7 +58,10 @@ extension Keychain.Query {
             kSecMatchLimit as String                : matchLimit,
             kSecReturnAttributes as String          : returnAttributes,
         ] as [String: Any]
-        
+        #if os(macOS)
+        query[kSecUseDataProtectionKeychain as String] = true
+        #endif
+
         #if os(iOS)
         if let promptMessage {
             query[kSecUseOperationPrompt as String] = promptMessage
@@ -83,10 +89,14 @@ extension Keychain.Query {
     }
     
     static func createQueryForDataDeletion(tag: String, itemClass: CFString) -> CFDictionary{
-        [
+        var query: [String: Any] = [
             kSecClass as String                     : itemClass,
             kSecAttrAccount as String               : tag,
-        ] as CFDictionary
+        ]
+        #if os(macOS)
+        query[kSecUseDataProtectionKeychain as String] = true
+        #endif
+        return query as CFDictionary
     }
 }
 

@@ -27,7 +27,10 @@ extension Keystore.Query {
             kSecAttrKeyType as String               : key.type,
             kSecAttrKeySizeInBits as String         : key.bitSize
         ]
-        
+        #if os(macOS)
+        query[kSecUseDataProtectionKeychain as String] = true
+        #endif
+
         addPermanentAttributesIfApplicable(to: &query, tag: tag)
 
         try addAccessControl(
@@ -58,7 +61,10 @@ extension Keystore.Query {
             kSecReturnPersistentRef as String       : true,
             kSecAttrApplicationTag as String        : tag
         ]
-        
+        #if os(macOS)
+        query[kSecUseDataProtectionKeychain as String] = true
+        #endif
+
         try addAccessControl(
             to: &query,
             context: context,
@@ -71,11 +77,14 @@ extension Keystore.Query {
     }
     
     static func createQueryForKeyParsing(_ keyType: Keystore.KeyTypeParseMode) -> CFDictionary{
-        let query: [String: Any] = [
+        var query: [String: Any] = [
             kSecAttrKeyType as String               : keyType.type,
             kSecAttrKeyClass as String              : keyType.isPrivateKey ? kSecAttrKeyClassPrivate : kSecAttrKeyClassPublic
         ]
-        
+        #if os(macOS)
+        query[kSecUseDataProtectionKeychain as String] = true
+        #endif
+
         return query as CFDictionary
     }
     
@@ -99,7 +108,10 @@ extension Keystore.Query {
             kSecAttrKeyType as String               : key.type,
             kSecAttrApplicationTag as String        : tag
         ] as [String: Any]
-        
+        #if os(macOS)
+        query[kSecUseDataProtectionKeychain as String] = true
+        #endif
+
         #if os(iOS)
         if let promptMessage {
             query[kSecUseOperationPrompt as String] = promptMessage
@@ -127,12 +139,16 @@ extension Keystore.Query {
         tag: String,
         itemClass: CFString
     ) -> CFDictionary{
-        [
+        var query: [String: Any] = [
             kSecClass as String                     : itemClass,
             kSecAttrApplicationTag as String        : tag,
             kSecAttrKeyType as String               : key.type,
             kSecAttrKeyClass as String              : kSecAttrKeyClassPrivate
-        ] as CFDictionary
+        ]
+        #if os(macOS)
+        query[kSecUseDataProtectionKeychain as String] = true
+        #endif
+        return query as CFDictionary
     }
 
 }
