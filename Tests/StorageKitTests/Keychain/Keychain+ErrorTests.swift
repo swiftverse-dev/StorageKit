@@ -52,22 +52,3 @@ final class KeychainErrorTests: XCTestCase {
         XCTAssertEqual(Keychain.Error(from: errSecAuthFailed), .authenticationFailure)
     }
 }
-
-extension Keychain.Error: Equatable {
-    public static func == (lhs: Keychain.Error, rhs: Keychain.Error) -> Bool {
-        switch (lhs, rhs) {
-        case (.passcodeDisabled, .passcodeDisabled),
-             (.biometryDisabled, .biometryDisabled),
-             (.itemNotFound, .itemNotFound),
-             (.userCancelOperation, .userCancelOperation),
-             (.storeNotAvailable, .storeNotAvailable),
-             (.decodeFailure, .decodeFailure),
-             (.encodeFailure, .encodeFailure),
-             (.authenticationFailure, .authenticationFailure),
-             (.unexpectedFailure, .unexpectedFailure):
-            return true
-        default:
-            return false
-        }
-    }
-}

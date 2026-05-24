@@ -8,7 +8,7 @@
 import Foundation
 
 public extension Keychain {
-    enum Error: Swift.Error{
+    enum Error: Swift.Error, Equatable {
         case passcodeDisabled
         case biometryDisabled
         case itemNotFound
