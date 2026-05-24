@@ -16,7 +16,7 @@ extension Keychain.Query {
         _ data: Data,
         tag: String,
         itemClass: CFString,
-        context: LAContext,
+        context: LAContextProviding,
         protection: Keychain.Protection,
         accessControlFlags: SecAccessControlCreateFlags,
         policy: LAPolicy?
@@ -42,7 +42,7 @@ extension Keychain.Query {
         tag: String? = nil,
         matchLimit: CFString = kSecMatchLimitOne,
         itemClass: CFString,
-        context: LAContext,
+        context: LAContextProviding,
         protection: Keychain.Protection,
         accessControlFlags: SecAccessControlCreateFlags,
         policy: LAPolicy?,
@@ -95,7 +95,7 @@ extension Keychain.Query{
  
     static func addAccessControl(
         to query: inout [String: Any],
-        context: LAContext,
+        context: LAContextProviding,
         protection: Keychain.Protection,
         accessControlFlags: SecAccessControlCreateFlags,
         policy: LAPolicy?
@@ -116,7 +116,7 @@ extension Keychain.Query{
     }
 }
 
-private extension LAContext {
+private extension LAContextProviding {
     func canEvaluatePolicy(_ policy: LAPolicy?) -> Bool {
         guard let policy else { return true }
         return canEvaluatePolicy(policy, error: nil)

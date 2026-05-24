@@ -69,7 +69,7 @@ public extension Keystore {
                 policy: policy
             )
             
-            try Operation.storeKey(using: storeKeyQuery)
+            try Operation.storeKey(using: storeKeyQuery, with: performer)
         }
         
         return key
@@ -89,7 +89,7 @@ public extension Keystore {
             promptMessage: promptMessage
         )
         
-        return try Operation.loadPrivateKey(using: query)
+        return try Operation.loadPrivateKey(using: query, with: performer)
     }
     
     @discardableResult
@@ -105,7 +105,7 @@ public extension Keystore {
             tag: alreadyMappedTag,
             itemClass: itemClass
         )
-        return Operation.deleteItem(using: query)
+        return Operation.deleteItem(using: query, with: performer)
     }
 }
 

@@ -27,7 +27,7 @@ extension KeychainStorage {
             policy: policy
         )
         
-        try Keychain.Operation.addItem(using: query)
+        try Keychain.Operation.addItem(using: query, with: performer)
     }
     
     public func save<T: Encodable>(_ object: T, withTag tag: String) throws{
@@ -54,7 +54,7 @@ extension KeychainStorage {
             promptMessage: promptMessage
         )
         
-        return try Keychain.Operation.loadItem(using: query)
+        return try Keychain.Operation.loadItem(using: query, with: performer)
     }
     
     public func loadObject<T: Decodable>(withTag tag: String) throws -> T{
@@ -78,7 +78,7 @@ extension KeychainStorage {
     private func deleteItem(withNoPrefixTag tag: String) -> Bool {
         let query = Keychain.Query.createQueryForDataDeletion(tag: tag, itemClass: itemClass)
         
-        return Keychain.Operation.deleteItem(using: query)
+        return Keychain.Operation.deleteItem(using: query, with: performer)
     }
     
     @discardableResult
@@ -96,7 +96,7 @@ extension KeychainStorage {
         
         // Search all the items in the keychain
         guard let getItemsQuery = optItemsQuery,
-            let items = try? Keychain.Operation.loadAttributedItems(using: getItemsQuery) else { return false }
+            let items = try? Keychain.Operation.loadAttributedItems(using: getItemsQuery, with: performer) else { return false }
         
         let deletedItemsSuccess: [Bool] = items
             .compactMap{
