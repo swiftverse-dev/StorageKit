@@ -9,8 +9,8 @@ import Foundation
 import LocalAuthentication
 
 public final class Keystore: Keychain {
-    private static let defaultStoreId = "default.keystore"
-    static let `default` = Keystore(
+    public static let defaultStoreId = "default.keystore"
+    public static let `default` = Keystore(
         storeId: defaultStoreId,
         protection: .whenThisDeviceUnlocked
     )
