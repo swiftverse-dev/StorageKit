@@ -21,7 +21,8 @@ extension Keystore.Query {
         context: LAContextProviding,
         protection: Keychain.Protection,
         accessControlFlags: SecAccessControlCreateFlags,
-        policy: LAPolicy?
+        policy: LAPolicy?,
+        accessGroup: String? = nil
     ) throws -> CFDictionary{
         var query: [String: Any] = [
             kSecAttrKeyType as String               : key.type,
@@ -30,6 +31,10 @@ extension Keystore.Query {
         #if os(macOS)
         query[kSecUseDataProtectionKeychain as String] = true
         #endif
+
+        if let accessGroup {
+            query[kSecAttrAccessGroup as String] = accessGroup
+        }
 
         addPermanentAttributesIfApplicable(to: &query, tag: tag)
 
@@ -51,7 +56,8 @@ extension Keystore.Query {
         context: LAContextProviding,
         protection: Keychain.Protection,
         accessControlFlags: SecAccessControlCreateFlags,
-        policy: LAPolicy?
+        policy: LAPolicy?,
+        accessGroup: String? = nil
     ) throws -> CFDictionary{
         var query: [String: Any] = [
             kSecAttrKeyType as String               : key.type,
@@ -65,6 +71,10 @@ extension Keystore.Query {
         query[kSecUseDataProtectionKeychain as String] = true
         #endif
 
+        if let accessGroup {
+            query[kSecAttrAccessGroup as String] = accessGroup
+        }
+
         try addAccessControl(
             to: &query,
             context: context,
@@ -76,7 +86,7 @@ extension Keystore.Query {
         return query as CFDictionary
     }
     
-    static func createQueryForKeyParsing(_ keyType: Keystore.KeyTypeParseMode) -> CFDictionary{
+    static func createQueryForKeyParsing(_ keyType: Keystore.KeyTypeParseMode, accessGroup: String? = nil) -> CFDictionary{
         var query: [String: Any] = [
             kSecAttrKeyType as String               : keyType.type,
             kSecAttrKeyClass as String              : keyType.isPrivateKey ? kSecAttrKeyClassPrivate : kSecAttrKeyClassPublic
@@ -84,6 +94,10 @@ extension Keystore.Query {
         #if os(macOS)
         query[kSecUseDataProtectionKeychain as String] = true
         #endif
+
+        if let accessGroup {
+            query[kSecAttrAccessGroup as String] = accessGroup
+        }
 
         return query as CFDictionary
     }
@@ -97,6 +111,7 @@ extension Keystore.Query {
         protection: Keychain.Protection,
         accessControlFlags: SecAccessControlCreateFlags,
         policy: LAPolicy?,
+        accessGroup: String? = nil,
         returnAttributes: Bool = false,
         promptMessage: String? = nil
     ) throws -> CFDictionary{
@@ -122,7 +137,11 @@ extension Keystore.Query {
             context.localizedReason = promptMessage
         }
         #endif
-        
+
+        if let accessGroup {
+            query[kSecAttrAccessGroup as String] = accessGroup
+        }
+
         try addAccessControl(
             to: &query,
             context: context,
@@ -137,7 +156,8 @@ extension Keystore.Query {
     static func createQueryForKeyDeletion(
         _ key: Keystore.KeyType,
         tag: String,
-        itemClass: CFString
+        itemClass: CFString,
+        accessGroup: String? = nil
     ) -> CFDictionary{
         var query: [String: Any] = [
             kSecClass as String                     : itemClass,
@@ -148,6 +168,9 @@ extension Keystore.Query {
         #if os(macOS)
         query[kSecUseDataProtectionKeychain as String] = true
         #endif
+        if let accessGroup {
+            query[kSecAttrAccessGroup as String] = accessGroup
+        }
         return query as CFDictionary
     }
 

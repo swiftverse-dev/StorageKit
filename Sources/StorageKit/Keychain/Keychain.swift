@@ -12,6 +12,7 @@ open class Keychain{
     public let storeId: String
     public let protection: Keychain.Protection
     public let accessControl: AccessControl
+    public let accessGroup: String?
     public let policy: LAPolicy?
     public var promptMessage: String?
     public var reuseContext = ReuseContextMode.never
@@ -49,13 +50,15 @@ open class Keychain{
         protection: Keychain.Protection,
         accessControl: AccessControl = [],
         policy: LAPolicy? = nil,
-        itemClass: CFString = kSecClassGenericPassword
+        itemClass: CFString = kSecClassGenericPassword,
+        accessGroup: String? = nil
     ) {
         self.storeId = storeId
         self.protection = protection
         self.accessControl = accessControl
         self.policy = policy
         self.itemClass = itemClass
+        self.accessGroup = accessGroup
         self.performer = SecItemPerformer()
         self.contextFactory = { LAContext() }
     }
@@ -66,6 +69,7 @@ open class Keychain{
         accessControl: AccessControl,
         policy: LAPolicy?,
         itemClass: CFString,
+        accessGroup: String?,
         performer: KeychainPerforming,
         contextFactory: @escaping () -> LAContextProviding
     ) {
@@ -74,6 +78,7 @@ open class Keychain{
         self.accessControl = accessControl
         self.policy = policy
         self.itemClass = itemClass
+        self.accessGroup = accessGroup
         self.performer = performer
         self.contextFactory = contextFactory
     }

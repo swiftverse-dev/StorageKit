@@ -15,6 +15,7 @@ enum KeychainSUTFactory {
         accessControl: Keychain.AccessControl = [],
         policy: LAPolicy? = nil,
         performer: KeychainPerforming,
+        accessGroup: String? = nil,
         contextFactory: @escaping () -> LAContextProviding = { StubLAContext() }
     ) -> KeychainStorage {
         KeychainStorage(
@@ -23,6 +24,7 @@ enum KeychainSUTFactory {
             accessControl: accessControl,
             policy: policy,
             itemClass: kSecClassGenericPassword,
+            accessGroup: accessGroup,
             performer: performer,
             contextFactory: contextFactory
         )
@@ -34,6 +36,7 @@ enum KeychainSUTFactory {
         accessControl: Keychain.AccessControl = [],
         policy: LAPolicy? = nil,
         performer: KeychainPerforming,
+        accessGroup: String? = nil,
         contextFactory: @escaping () -> LAContextProviding = { StubLAContext() }
     ) -> Keystore {
         Keystore(
@@ -41,6 +44,7 @@ enum KeychainSUTFactory {
             protection: protection,
             accessControl: accessControl,
             policy: policy,
+            accessGroup: accessGroup,
             performer: performer,
             contextFactory: contextFactory
         )

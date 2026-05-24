@@ -19,14 +19,16 @@ public final class Keystore: Keychain {
         storeId: String,
         protection: Protection,
         accessControl: AccessControl = [],
-        policy: LAPolicy? = nil
+        policy: LAPolicy? = nil,
+        accessGroup: String? = nil
     ) {
         super.init(
             storeId: storeId,
             protection: protection,
             accessControl: accessControl,
             policy: policy,
-            itemClass: kSecClassKey
+            itemClass: kSecClassKey,
+            accessGroup: accessGroup
         )
     }
 
@@ -35,6 +37,7 @@ public final class Keystore: Keychain {
         protection: Protection,
         accessControl: AccessControl,
         policy: LAPolicy?,
+        accessGroup: String?,
         performer: KeychainPerforming,
         contextFactory: @escaping () -> LAContextProviding
     ) {
@@ -44,6 +47,7 @@ public final class Keystore: Keychain {
             accessControl: accessControl,
             policy: policy,
             itemClass: kSecClassKey,
+            accessGroup: accessGroup,
             performer: performer,
             contextFactory: contextFactory
         )
@@ -65,12 +69,13 @@ public extension Keystore {
             context: context,
             protection: protection,
             accessControlFlags: accessControl,
-            policy: policy
+            policy: policy,
+            accessGroup: accessGroup
         )
-        
+
         return try Operation.generatePrivateKey(using: query)
     }
-    
+
     func keyFrom(_ keyType: KeyTypeParseMode, storingWithTag tag: String? = nil) throws -> SecKey {
         let key = try Self.keyFrom(keyType)
         let tag = tag.map(map(tag:)) ?? nil
@@ -85,7 +90,8 @@ public extension Keystore {
                 context: context,
                 protection: protection,
                 accessControlFlags: accessControl,
-                policy: policy
+                policy: policy,
+                accessGroup: accessGroup
             )
             
             try Operation.storeKey(using: storeKeyQuery, with: performer)
@@ -105,6 +111,7 @@ public extension Keystore {
             protection: protection,
             accessControlFlags: accessControl,
             policy: policy,
+            accessGroup: accessGroup,
             promptMessage: promptMessage
         )
         
@@ -122,7 +129,8 @@ public extension Keystore {
         let query = Query.createQueryForKeyDeletion(
             .rsa,
             tag: alreadyMappedTag,
-            itemClass: itemClass
+            itemClass: itemClass,
+            accessGroup: accessGroup
         )
         return Operation.deleteItem(using: query, with: performer)
     }
@@ -137,7 +145,8 @@ public extension Keystore {
             context: LAContext(),
             protection: .whenUnlocked,
             accessControlFlags: [],
-            policy: nil
+            policy: nil,
+            accessGroup: nil
         )
         
         return try Operation.generatePrivateKey(using: query)

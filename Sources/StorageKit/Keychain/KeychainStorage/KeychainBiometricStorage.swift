@@ -37,14 +37,16 @@ public final class KeychainBiometricStorage: KeychainStorage {
         accessControl: AccessControl = .passcodeOrAnyBiometry ,
         policy: LAPolicy = .deviceOwnerAuthentication,
         reuseContextMode: Keychain.ReuseContextMode = .never,
-        promptMessage: String? = nil
+        promptMessage: String? = nil,
+        accessGroup: String? = nil
     ){
         super.init(
             storeId: storeId,
             protection: .whenThisDevicePasscodeSet,
             accessControl: accessControl.flags,
             policy: policy,
-            itemClass: kSecClassInternetPassword
+            itemClass: kSecClassInternetPassword,
+            accessGroup: accessGroup
         )
         self.promptMessage = promptMessage
         self.reuseContext = reuseContextMode

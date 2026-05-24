@@ -15,14 +15,16 @@ open class KeychainStorage: Keychain, Storage {
         protection: Keychain.Protection,
         accessControl: AccessControl = [],
         policy: LAPolicy? = nil,
-        itemClass: CFString = kSecClassGenericPassword
+        itemClass: CFString = kSecClassGenericPassword,
+        accessGroup: String? = nil
     ) {
         super.init(
             storeId: storeId,
             protection: protection,
             accessControl: accessControl,
             policy: policy,
-            itemClass: itemClass
+            itemClass: itemClass,
+            accessGroup: accessGroup
         )
     }
 
@@ -32,6 +34,7 @@ open class KeychainStorage: Keychain, Storage {
         accessControl: AccessControl,
         policy: LAPolicy?,
         itemClass: CFString,
+        accessGroup: String?,
         performer: KeychainPerforming,
         contextFactory: @escaping () -> LAContextProviding
     ) {
@@ -41,6 +44,7 @@ open class KeychainStorage: Keychain, Storage {
             accessControl: accessControl,
             policy: policy,
             itemClass: itemClass,
+            accessGroup: accessGroup,
             performer: performer,
             contextFactory: contextFactory
         )
@@ -62,9 +66,10 @@ extension KeychainStorage {
             context: context,
             protection: protection,
             accessControlFlags: accessControl,
-            policy: policy
+            policy: policy,
+            accessGroup: accessGroup
         )
-        
+
         try Keychain.Operation.addItem(using: query, with: performer)
     }
     
@@ -89,6 +94,7 @@ extension KeychainStorage {
             protection: protection,
             accessControlFlags: accessControl,
             policy: policy,
+            accessGroup: accessGroup,
             promptMessage: promptMessage
         )
         
@@ -114,7 +120,7 @@ extension KeychainStorage {
     }
     
     private func deleteItem(withNoPrefixTag tag: String) -> Bool {
-        let query = Keychain.Query.createQueryForDataDeletion(tag: tag, itemClass: itemClass)
+        let query = Keychain.Query.createQueryForDataDeletion(tag: tag, itemClass: itemClass, accessGroup: accessGroup)
         
         return Keychain.Operation.deleteItem(using: query, with: performer)
     }
@@ -128,6 +134,7 @@ extension KeychainStorage {
             protection: protection,
             accessControlFlags: accessControl,
             policy: policy,
+            accessGroup: accessGroup,
             returnAttributes: true,
             promptMessage: "Please Authenticate to delete items into keychain"
         )

@@ -19,7 +19,8 @@ extension Keychain.Query {
         context: LAContextProviding,
         protection: Keychain.Protection,
         accessControlFlags: SecAccessControlCreateFlags,
-        policy: LAPolicy?
+        policy: LAPolicy?,
+        accessGroup: String? = nil
     ) throws -> CFDictionary{
         var query: [String: Any] = [
             kSecClass as String                     : itemClass,
@@ -29,6 +30,10 @@ extension Keychain.Query {
         #if os(macOS)
         query[kSecUseDataProtectionKeychain as String] = true
         #endif
+
+        if let accessGroup {
+            query[kSecAttrAccessGroup as String] = accessGroup
+        }
 
         try addAccessControl(
             to: &query,
@@ -49,6 +54,7 @@ extension Keychain.Query {
         protection: Keychain.Protection,
         accessControlFlags: SecAccessControlCreateFlags,
         policy: LAPolicy?,
+        accessGroup: String? = nil,
         returnAttributes: Bool = false,
         promptMessage: String? = nil
     ) throws -> CFDictionary{
@@ -76,7 +82,11 @@ extension Keychain.Query {
         if let tag {
             query[kSecAttrAccount as String] = tag
         }
-        
+
+        if let accessGroup {
+            query[kSecAttrAccessGroup as String] = accessGroup
+        }
+
         try addAccessControl(
             to: &query,
             context: context,
@@ -88,7 +98,7 @@ extension Keychain.Query {
         return query as CFDictionary
     }
     
-    static func createQueryForDataDeletion(tag: String, itemClass: CFString) -> CFDictionary{
+    static func createQueryForDataDeletion(tag: String, itemClass: CFString, accessGroup: String? = nil) -> CFDictionary{
         var query: [String: Any] = [
             kSecClass as String                     : itemClass,
             kSecAttrAccount as String               : tag,
@@ -96,6 +106,9 @@ extension Keychain.Query {
         #if os(macOS)
         query[kSecUseDataProtectionKeychain as String] = true
         #endif
+        if let accessGroup {
+            query[kSecAttrAccessGroup as String] = accessGroup
+        }
         return query as CFDictionary
     }
 }
