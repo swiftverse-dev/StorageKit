@@ -11,6 +11,7 @@ final class KeychainQueryPlatformTests: XCTestCase {
         let stub = StubLAContext()
         let query = try Keychain.Query.createQueryForDataRetrieve(
             tag: "tag",
+            service: "test.service",
             itemClass: kSecClassGenericPassword,
             context: stub,
             protection: .whenUnlocked,
@@ -31,6 +32,7 @@ final class KeychainQueryPlatformTests: XCTestCase {
         let query = try Keychain.Query.createQueryForDataStore(
             Data("payload".utf8),
             tag: "tag",
+            service: "test.service",
             itemClass: kSecClassGenericPassword,
             context: stub,
             protection: .whenUnlocked,
@@ -49,6 +51,7 @@ final class KeychainQueryPlatformTests: XCTestCase {
         let stub = StubLAContext()
         let query = try Keychain.Query.createQueryForDataRetrieve(
             tag: "tag",
+            service: "test.service",
             itemClass: kSecClassGenericPassword,
             context: stub,
             protection: .whenUnlocked,

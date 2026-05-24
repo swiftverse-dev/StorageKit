@@ -22,7 +22,8 @@ final class KeychainStorageClearTests: XCTestCase {
 
         XCTAssertEqual(fake.items.count, 1)
         let surviving = fake.items.values.first!
-        XCTAssertEqual(surviving[kSecAttrAccount as String] as? String, "store.B.tag1")
+        XCTAssertEqual(surviving[kSecAttrAccount as String] as? String, "tag1")
+        XCTAssertEqual(surviving[kSecAttrService as String] as? String, "store.B")
     }
 
     func test_clear_returnsFalseWhenNothingToDelete() {

@@ -14,7 +14,7 @@ public final class KeychainBiometricStorage: KeychainStorage {
         case passcodeOrAnyBiometry
         case currentBiometry
         case anyBiometry
-        
+
         var flags: SecAccessControlCreateFlags {
             switch self {
             case .passcode: return .devicePasscode
@@ -24,17 +24,13 @@ public final class KeychainBiometricStorage: KeychainStorage {
             }
         }
     }
-    
+
     private static let defaultStoreId = "default.biometric.storage"
     public static let `default` = KeychainBiometricStorage(storeId: defaultStoreId)
-    public var reuseContextMode: Keychain.ReuseContextMode {
-        get { super.reuseContext }
-        set { super.reuseContext = newValue }
-    }
-    
+
     public init(
         storeId: String,
-        accessControl: AccessControl = .passcodeOrAnyBiometry ,
+        accessControl: AccessControl = .passcodeOrAnyBiometry,
         policy: LAPolicy = .deviceOwnerAuthentication,
         reuseContextMode: Keychain.ReuseContextMode = .never,
         promptMessage: String? = nil,
@@ -45,16 +41,15 @@ public final class KeychainBiometricStorage: KeychainStorage {
             protection: .whenThisDevicePasscodeSet,
             accessControl: accessControl.flags,
             policy: policy,
-            itemClass: kSecClassInternetPassword,
             accessGroup: accessGroup
         )
         self.promptMessage = promptMessage
         self.reuseContext = reuseContextMode
     }
-    
+
     @discardableResult
     public func reusingContext(_ mode: Keychain.ReuseContextMode) -> Self {
-        reuseContextMode = mode
+        reuseContext = mode
         return self
     }
 }

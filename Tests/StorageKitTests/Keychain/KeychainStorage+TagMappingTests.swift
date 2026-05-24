@@ -8,7 +8,7 @@ import XCTest
 
 final class KeychainStorageTagMappingTests: XCTestCase {
 
-    func test_save_storesItemUnderPrefixedAccount() throws {
+    func test_save_storesItemUnderService() throws {
         let fake = InMemoryKeychain()
         let sut = KeychainSUTFactory.makeKeychainStorage(storeId: "store.A", performer: fake)
 
@@ -16,7 +16,8 @@ final class KeychainStorageTagMappingTests: XCTestCase {
 
         XCTAssertEqual(fake.items.count, 1)
         let stored = fake.items.values.first!
-        XCTAssertEqual(stored[kSecAttrAccount as String] as? String, "store.A.tag1")
+        XCTAssertEqual(stored[kSecAttrAccount as String] as? String, "tag1")
+        XCTAssertEqual(stored[kSecAttrService as String] as? String, "store.A")
         XCTAssertEqual(stored[kSecValueData as String] as? Data, Data("payload".utf8))
         XCTAssertEqual(stored[kSecClass as String] as? String, kSecClassGenericPassword as String)
     }

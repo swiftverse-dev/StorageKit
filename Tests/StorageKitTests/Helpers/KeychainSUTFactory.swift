@@ -23,7 +23,6 @@ enum KeychainSUTFactory {
             protection: protection,
             accessControl: accessControl,
             policy: policy,
-            itemClass: kSecClassGenericPassword,
             accessGroup: accessGroup,
             performer: performer,
             contextFactory: contextFactory

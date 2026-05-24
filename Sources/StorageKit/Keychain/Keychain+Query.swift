@@ -15,6 +15,7 @@ extension Keychain.Query {
     static func createQueryForDataStore(
         _ data: Data,
         tag: String,
+        service: String,
         itemClass: CFString,
         context: LAContextProviding,
         protection: Keychain.Protection,
@@ -24,6 +25,7 @@ extension Keychain.Query {
     ) throws -> CFDictionary{
         var query: [String: Any] = [
             kSecClass as String                     : itemClass,
+            kSecAttrService as String               : service,
             kSecAttrAccount as String               : tag,
             kSecValueData as String                 : data
         ]
@@ -48,6 +50,7 @@ extension Keychain.Query {
     
     static func createQueryForDataRetrieve(
         tag: String? = nil,
+        service: String,
         matchLimit: CFString = kSecMatchLimitOne,
         itemClass: CFString,
         context: LAContextProviding,
@@ -79,6 +82,7 @@ extension Keychain.Query {
         }
         #endif
                 
+        query[kSecAttrService as String] = service
         if let tag {
             query[kSecAttrAccount as String] = tag
         }
@@ -98,11 +102,19 @@ extension Keychain.Query {
         return query as CFDictionary
     }
     
-    static func createQueryForDataDeletion(tag: String, itemClass: CFString, accessGroup: String? = nil) -> CFDictionary{
+    static func createQueryForDataDeletion(
+        tag: String?,
+        service: String,
+        itemClass: CFString,
+        accessGroup: String? = nil
+    ) -> CFDictionary{
         var query: [String: Any] = [
             kSecClass as String                     : itemClass,
-            kSecAttrAccount as String               : tag,
+            kSecAttrService as String               : service,
         ]
+        if let tag {
+            query[kSecAttrAccount as String] = tag
+        }
         #if os(macOS)
         query[kSecUseDataProtectionKeychain as String] = true
         #endif
