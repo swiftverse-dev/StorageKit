@@ -6,8 +6,46 @@
 //
 
 import Foundation
+import LocalAuthentication
 
-open class KeychainStorage: Keychain, Storage {}
+open class KeychainStorage: Keychain, Storage {
+
+    public override init(
+        storeId: String,
+        protection: Keychain.Protection,
+        accessControl: AccessControl = [],
+        policy: LAPolicy? = nil,
+        itemClass: CFString = kSecClassGenericPassword
+    ) {
+        super.init(
+            storeId: storeId,
+            protection: protection,
+            accessControl: accessControl,
+            policy: policy,
+            itemClass: itemClass
+        )
+    }
+
+    internal override init(
+        storeId: String,
+        protection: Keychain.Protection,
+        accessControl: AccessControl,
+        policy: LAPolicy?,
+        itemClass: CFString,
+        performer: KeychainPerforming,
+        contextFactory: @escaping () -> LAContextProviding
+    ) {
+        super.init(
+            storeId: storeId,
+            protection: protection,
+            accessControl: accessControl,
+            policy: policy,
+            itemClass: itemClass,
+            performer: performer,
+            contextFactory: contextFactory
+        )
+    }
+}
 
 
 // MARK: Save Operations

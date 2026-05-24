@@ -29,6 +29,25 @@ public final class Keystore: Keychain {
             itemClass: kSecClassKey
         )
     }
+
+    internal init(
+        storeId: String,
+        protection: Protection,
+        accessControl: AccessControl,
+        policy: LAPolicy?,
+        performer: KeychainPerforming,
+        contextFactory: @escaping () -> LAContextProviding
+    ) {
+        super.init(
+            storeId: storeId,
+            protection: protection,
+            accessControl: accessControl,
+            policy: policy,
+            itemClass: kSecClassKey,
+            performer: performer,
+            contextFactory: contextFactory
+        )
+    }
 }
 
 
