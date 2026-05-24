@@ -144,3 +144,6 @@ iOSInjectionProject/
 ### BuildTools ###
 BuildTools/.build 
 BuildTools/.swiftpm
+
+
+docs
