@@ -77,7 +77,10 @@ extension Keychain.Query {
         }
         #else
         if let promptMessage {
-            query[kSecUseAuthenticationContext as String] = promptMessage
+            // macOS replacement for the deprecated `kSecUseOperationPrompt`:
+            // pass the prompt via `LAContext.localizedReason`. The LAContext
+            // itself is written into `kSecUseAuthenticationContext` later by
+            // `addAccessControl`.
             context.localizedReason = promptMessage
         }
         #endif

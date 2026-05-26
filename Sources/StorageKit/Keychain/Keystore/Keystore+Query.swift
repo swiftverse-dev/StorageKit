@@ -133,7 +133,6 @@ extension Keystore.Query {
         }
         #else
         if let promptMessage {
-            query[kSecUseAuthenticationContext as String] = promptMessage
             context.localizedReason = promptMessage
         }
         #endif
