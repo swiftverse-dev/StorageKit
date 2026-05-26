@@ -38,7 +38,7 @@ open class Keychain{
 
             let newContext = contextFactory()
             _context = newContext
-            (newContext as? LAContext)?.reuse(for: timeInterval) { [weak self] _ in
+            newContext.reuse(for: timeInterval) { [weak self] _ in
                 self?._context = nil
             }
             return newContext
