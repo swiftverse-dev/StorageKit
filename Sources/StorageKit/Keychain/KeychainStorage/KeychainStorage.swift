@@ -10,12 +10,11 @@ import LocalAuthentication
 
 open class KeychainStorage: Keychain, Storage {
 
-    public override init(
+    public init(
         storeId: String,
         protection: Keychain.Protection,
         accessControl: AccessControl = [],
         policy: LAPolicy? = nil,
-        itemClass: CFString = kSecClassGenericPassword,
         accessGroup: String? = nil
     ) {
         super.init(
@@ -23,7 +22,7 @@ open class KeychainStorage: Keychain, Storage {
             protection: protection,
             accessControl: accessControl,
             policy: policy,
-            itemClass: kSecClassGenericPassword, // locked
+            itemClass: kSecClassGenericPassword,
             accessGroup: accessGroup
         )
     }
