@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "StorageKit",
     platforms: [
-        .iOS(.v12),
+        .iOS(.v13),
         .macOS(.v11)
     ],
     products: [
@@ -16,6 +16,10 @@ let package = Package(
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
-        .target(name: "StorageKit")
+        .target(name: "StorageKit"),
+        .testTarget(
+            name: "StorageKitTests",
+            dependencies: ["StorageKit"]
+        )
     ]
 )

@@ -9,8 +9,8 @@ import Foundation
 import LocalAuthentication
 
 public final class Keystore: Keychain {
-    private static let defaultStoreId = "default.keystore"
-    static let `default` = Keystore(
+    public static let defaultStoreId = "default.keystore"
+    public static let `default` = Keystore(
         storeId: defaultStoreId,
         protection: .whenThisDeviceUnlocked
     )
@@ -19,14 +19,37 @@ public final class Keystore: Keychain {
         storeId: String,
         protection: Protection,
         accessControl: AccessControl = [],
-        policy: LAPolicy? = nil
+        policy: LAPolicy? = nil,
+        accessGroup: String? = nil
     ) {
         super.init(
             storeId: storeId,
             protection: protection,
             accessControl: accessControl,
             policy: policy,
-            itemClass: kSecClassKey
+            itemClass: kSecClassKey,
+            accessGroup: accessGroup
+        )
+    }
+
+    internal init(
+        storeId: String,
+        protection: Protection,
+        accessControl: AccessControl,
+        policy: LAPolicy?,
+        accessGroup: String?,
+        performer: KeychainPerforming,
+        contextFactory: @escaping () -> LAContextProviding
+    ) {
+        super.init(
+            storeId: storeId,
+            protection: protection,
+            accessControl: accessControl,
+            policy: policy,
+            itemClass: kSecClassKey,
+            accessGroup: accessGroup,
+            performer: performer,
+            contextFactory: contextFactory
         )
     }
 }
@@ -46,12 +69,13 @@ public extension Keystore {
             context: context,
             protection: protection,
             accessControlFlags: accessControl,
-            policy: policy
+            policy: policy,
+            accessGroup: accessGroup
         )
-        
+
         return try Operation.generatePrivateKey(using: query)
     }
-    
+
     func keyFrom(_ keyType: KeyTypeParseMode, storingWithTag tag: String? = nil) throws -> SecKey {
         let key = try Self.keyFrom(keyType)
         let tag = tag.map(map(tag:)) ?? nil
@@ -66,10 +90,11 @@ public extension Keystore {
                 context: context,
                 protection: protection,
                 accessControlFlags: accessControl,
-                policy: policy
+                policy: policy,
+                accessGroup: accessGroup
             )
             
-            try Operation.storeKey(using: storeKeyQuery)
+            try Operation.storeKey(using: storeKeyQuery, with: performer)
         }
         
         return key
@@ -86,10 +111,11 @@ public extension Keystore {
             protection: protection,
             accessControlFlags: accessControl,
             policy: policy,
+            accessGroup: accessGroup,
             promptMessage: promptMessage
         )
         
-        return try Operation.loadPrivateKey(using: query)
+        return try Operation.loadPrivateKey(using: query, with: performer)
     }
     
     @discardableResult
@@ -103,9 +129,10 @@ public extension Keystore {
         let query = Query.createQueryForKeyDeletion(
             .rsa,
             tag: alreadyMappedTag,
-            itemClass: itemClass
+            itemClass: itemClass,
+            accessGroup: accessGroup
         )
-        return Operation.deleteItem(using: query)
+        return Operation.deleteItem(using: query, with: performer)
     }
 }
 
@@ -118,7 +145,8 @@ public extension Keystore {
             context: LAContext(),
             protection: .whenUnlocked,
             accessControlFlags: [],
-            policy: nil
+            policy: nil,
+            accessGroup: nil
         )
         
         return try Operation.generatePrivateKey(using: query)

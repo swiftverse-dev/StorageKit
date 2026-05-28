@@ -2,37 +2,41 @@
 //  Keychain.swift
 //  StorageKit
 //
-//  Created by Lorenzo Limoli on 16/11/22.
-//
 
 import Foundation
 import LocalAuthentication
 
 open class Keychain{
     public typealias AccessControl = SecAccessControlCreateFlags
-    
+
     public let storeId: String
     public let protection: Keychain.Protection
     public let accessControl: AccessControl
+    public let accessGroup: String?
     public let policy: LAPolicy?
     public var promptMessage: String?
     public var reuseContext = ReuseContextMode.never
-    
+
     public let itemClass: CFString
-    private var _context: LAContext?
-    public var context: LAContext {
+
+    // Internal seams. Defaults wire real Security/LocalAuthentication.
+    internal let performer: KeychainPerforming
+    internal let contextFactory: () -> LAContextProviding
+
+    private var _context: LAContextProviding?
+    internal var context: LAContextProviding {
         switch reuseContext {
         case .always:
-            let context = _context ?? LAContext()
+            let context = _context ?? contextFactory()
             _context = context
             return context
-            
-        case .never: return LAContext()
-            
+
+        case .never: return contextFactory()
+
         case .forInterval(let timeInterval):
             if let _context { return _context }
-            
-            let newContext = LAContext()
+
+            let newContext = contextFactory()
             _context = newContext
             newContext.reuse(for: timeInterval) { [weak self] _ in
                 self?._context = nil
@@ -40,18 +44,42 @@ open class Keychain{
             return newContext
         }
     }
-    
+
     public init(
         storeId: String,
         protection: Keychain.Protection,
         accessControl: AccessControl = [],
         policy: LAPolicy? = nil,
-        itemClass: CFString = kSecClassGenericPassword
+        itemClass: CFString = kSecClassGenericPassword,
+        accessGroup: String? = nil
     ) {
         self.storeId = storeId
         self.protection = protection
         self.accessControl = accessControl
         self.policy = policy
         self.itemClass = itemClass
+        self.accessGroup = accessGroup
+        self.performer = SecItemPerformer()
+        self.contextFactory = { LAContext() }
+    }
+
+    internal init(
+        storeId: String,
+        protection: Keychain.Protection,
+        accessControl: AccessControl,
+        policy: LAPolicy?,
+        itemClass: CFString,
+        accessGroup: String?,
+        performer: KeychainPerforming,
+        contextFactory: @escaping () -> LAContextProviding
+    ) {
+        self.storeId = storeId
+        self.protection = protection
+        self.accessControl = accessControl
+        self.policy = policy
+        self.itemClass = itemClass
+        self.accessGroup = accessGroup
+        self.performer = performer
+        self.contextFactory = contextFactory
     }
 }

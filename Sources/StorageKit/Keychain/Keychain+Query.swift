@@ -15,18 +15,28 @@ extension Keychain.Query {
     static func createQueryForDataStore(
         _ data: Data,
         tag: String,
+        service: String,
         itemClass: CFString,
-        context: LAContext,
+        context: LAContextProviding,
         protection: Keychain.Protection,
         accessControlFlags: SecAccessControlCreateFlags,
-        policy: LAPolicy?
+        policy: LAPolicy?,
+        accessGroup: String? = nil
     ) throws -> CFDictionary{
         var query: [String: Any] = [
             kSecClass as String                     : itemClass,
+            kSecAttrService as String               : service,
             kSecAttrAccount as String               : tag,
             kSecValueData as String                 : data
         ]
-        
+        #if os(macOS)
+        query[kSecUseDataProtectionKeychain as String] = true
+        #endif
+
+        if let accessGroup {
+            query[kSecAttrAccessGroup as String] = accessGroup
+        }
+
         try addAccessControl(
             to: &query,
             context: context,
@@ -40,12 +50,14 @@ extension Keychain.Query {
     
     static func createQueryForDataRetrieve(
         tag: String? = nil,
+        service: String,
         matchLimit: CFString = kSecMatchLimitOne,
         itemClass: CFString,
-        context: LAContext,
+        context: LAContextProviding,
         protection: Keychain.Protection,
         accessControlFlags: SecAccessControlCreateFlags,
         policy: LAPolicy?,
+        accessGroup: String? = nil,
         returnAttributes: Bool = false,
         promptMessage: String? = nil
     ) throws -> CFDictionary{
@@ -55,22 +67,33 @@ extension Keychain.Query {
             kSecMatchLimit as String                : matchLimit,
             kSecReturnAttributes as String          : returnAttributes,
         ] as [String: Any]
-        
-        #if TARGET_OS_IPHONE
+        #if os(macOS)
+        query[kSecUseDataProtectionKeychain as String] = true
+        #endif
+
+        #if os(iOS)
         if let promptMessage {
             query[kSecUseOperationPrompt as String] = promptMessage
         }
         #else
         if let promptMessage {
-            query[kSecUseAuthenticationContext as String] = promptMessage
+            // macOS replacement for the deprecated `kSecUseOperationPrompt`:
+            // pass the prompt via `LAContext.localizedReason`. The LAContext
+            // itself is written into `kSecUseAuthenticationContext` later by
+            // `addAccessControl`.
             context.localizedReason = promptMessage
         }
         #endif
                 
+        query[kSecAttrService as String] = service
         if let tag {
             query[kSecAttrAccount as String] = tag
         }
-        
+
+        if let accessGroup {
+            query[kSecAttrAccessGroup as String] = accessGroup
+        }
+
         try addAccessControl(
             to: &query,
             context: context,
@@ -82,11 +105,26 @@ extension Keychain.Query {
         return query as CFDictionary
     }
     
-    static func createQueryForDataDeletion(tag: String, itemClass: CFString) -> CFDictionary{
-        [
+    static func createQueryForDataDeletion(
+        tag: String?,
+        service: String,
+        itemClass: CFString,
+        accessGroup: String? = nil
+    ) -> CFDictionary{
+        var query: [String: Any] = [
             kSecClass as String                     : itemClass,
-            kSecAttrAccount as String               : tag,
-        ] as CFDictionary
+            kSecAttrService as String               : service,
+        ]
+        if let tag {
+            query[kSecAttrAccount as String] = tag
+        }
+        #if os(macOS)
+        query[kSecUseDataProtectionKeychain as String] = true
+        #endif
+        if let accessGroup {
+            query[kSecAttrAccessGroup as String] = accessGroup
+        }
+        return query as CFDictionary
     }
 }
 
@@ -95,7 +133,7 @@ extension Keychain.Query{
  
     static func addAccessControl(
         to query: inout [String: Any],
-        context: LAContext,
+        context: LAContextProviding,
         protection: Keychain.Protection,
         accessControlFlags: SecAccessControlCreateFlags,
         policy: LAPolicy?
@@ -116,7 +154,7 @@ extension Keychain.Query{
     }
 }
 
-private extension LAContext {
+private extension LAContextProviding {
     func canEvaluatePolicy(_ policy: LAPolicy?) -> Bool {
         guard let policy else { return true }
         return canEvaluatePolicy(policy, error: nil)

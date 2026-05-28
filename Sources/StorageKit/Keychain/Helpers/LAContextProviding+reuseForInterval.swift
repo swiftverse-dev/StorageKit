@@ -6,11 +6,9 @@
 //
 
 import Foundation
-import LocalAuthentication
 
-
-extension LAContext {
-    func reuse(for interval: TimeInterval, completion: @escaping (LAContext) -> Void) {
+extension LAContextProviding {
+    func reuse(for interval: TimeInterval, completion: @escaping (LAContextProviding) -> Void) {
         Timer.scheduledTimer(withTimeInterval: interval, repeats: false) { timer in
             timer.invalidate()
             self.invalidate()

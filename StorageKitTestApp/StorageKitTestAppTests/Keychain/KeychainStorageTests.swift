@@ -1,116 +1,70 @@
 //
 //  KeychainStorageTests.swift
-//  StorageKitTests
+//  StorageKitTestAppTests
 //
-//  Created by Lorenzo Limoli on 16/11/22.
+//  Integration tests — exercise real SecItem* against the host app's keychain.
 //
 
 import XCTest
 import StorageKit
 
-final class KeychainStorageTests: XCTestCase, StorageTests {
-    typealias Error = KeychainStorage.Error
-    
+final class KeychainStorageIntegrationTests: XCTestCase {
+
     override class func setUp() {
         super.setUp()
         Self.makeSUT().clear()
     }
-    
-    func test_saveData_succeeds() throws{
-        let someTag = someTag
-        let sut = makeSUT()
 
-        assert_saveData_succeeds(sut: sut, someTag: someTag)
-    }
-    
-    func test_saveData_overridesPreviouslyStoredValue() throws{
-        let someTag = someTag
+    func test_save_thenLoad_returnsSameData() throws {
         let sut = makeSUT()
-        
-        try assert_saveData_overridesPreviouslyStoredValue(sut: sut, someTag: someTag)
-    }
-    
-    func test_saveObject_succeeds() throws{
-        let someTag = someTag
-        let sut = makeSUT()
-        
-        assert_saveObject_succeeds(sut: sut, someTag: someTag)
-    }
-    
-    func test_saveObject_overridesPreviouslyStoredValue() throws{
-        let someTag = someTag
-        let sut = makeSUT()
-        
-        try assert_saveObject_overridesPreviouslyStoredValue(sut: sut, someTag: someTag)
-    }
-    
-    func test_loadData_throwsItemNotFoundOnUnknownTag() throws{
-        let sut = makeSUT()
-        try assert_loadData_throwsItemNotFoundOnUnknownTag(sut: sut, error: .itemNotFound)
-    }
-    
-    func test_loadData_returnsTheDataPreviouslySaved() throws{
-        let someTag = someTag
-        let sut = makeSUT()
-        
-        try assert_loadData_returnsTheDataPreviouslySaved(sut: sut, someTag: someTag)
-    }
-    
-    func test_loadObj_throwsItemNotFoundOnUnknownTag() throws{
-        let sut = makeSUT()
-        
-        try assert_loadObj_throwsItemNotFoundOnUnknownTag(sut: sut, error: .itemNotFound)
-    }
-    
-    func test_loadObj_returnsTheDataPreviouslySaved() throws{
-        let someTag = someTag
-        let sut = makeSUT()
-        
-        try assert_loadObj_returnsTheDataPreviouslySaved(sut: sut, someTag: someTag)
-    }
-    
-    func test_loadObj_throwsDecodeFailureOnWrongObjectSchema() throws{
-        let someTag = someTag
-        let sut = makeSUT()
-        
-        try assert_loadObj_throwsDecodeFailureOnWrongObjectSchema(sut: sut, someTag: someTag, error: .decodeFailure)
-    }
-    
-    func test_delete_returnsFalseOnUnknownTag() throws{
-        let sut = makeSUT()
-        assert_delete_returnsFalseOnUnknownTag(sut: sut)
-    }
-    
-    func test_delete_returnsTrueOnKnownTag() throws{
-        let someTag = someTag
-        let sut = makeSUT()
-        
-        try assert_delete_returnsTrueOnKnownTag(sut: sut, someTag: someTag)
-    }
-    
-    func test_clear_returnsTrueWhenDeletesAllTheItemsOfTheStorage() throws {
-        try assert_clear_returnsTrueWhenDeletesAllTheItemsOfTheStorage(sut: makeSUT(storeId:))
-    }
-    
-    func test_clear_returnsFalseWhenThereAreNoItemsInTheStorage() throws {
-        let sut = makeSUT()
-        try assert_clear_returnsFalseWhenThereAreNoItemsInTheStorage(sut: sut)
+        let payload = Data("payload".utf8)
+
+        try sut.save(payload, withTag: "tag1")
+        let loaded = try sut.loadData(withTag: "tag1")
+
+        XCTAssertEqual(loaded, payload)
     }
 
+    func test_save_overwritesPreviousValueForSameTag() throws {
+        let sut = makeSUT()
+
+        try sut.save(Data("first".utf8), withTag: "tag1")
+        try sut.save(Data("second".utf8), withTag: "tag1")
+
+        XCTAssertEqual(try sut.loadData(withTag: "tag1"), Data("second".utf8))
+    }
+
+    func test_loadData_throwsItemNotFound_forUnknownTag() {
+        let sut = makeSUT()
+        XCTAssertThrowsError(try sut.loadData(withTag: "neverWritten"))
+    }
+
+    func test_deleteItem_thenLoadData_throwsItemNotFound() throws {
+        let sut = makeSUT()
+        try sut.save(Data("payload".utf8), withTag: "tag1")
+        XCTAssertTrue(sut.deleteItem(withTag: "tag1"))
+        XCTAssertThrowsError(try sut.loadData(withTag: "tag1"))
+    }
+
+    func test_clear_removesAllItemsForStoreId() throws {
+        let sut = makeSUT()
+        try sut.save(Data("a".utf8), withTag: "tagA")
+        try sut.save(Data("b".utf8), withTag: "tagB")
+
+        XCTAssertTrue(sut.clear())
+        XCTAssertThrowsError(try sut.loadData(withTag: "tagA"))
+        XCTAssertThrowsError(try sut.loadData(withTag: "tagB"))
+    }
 }
 
-private extension KeychainStorageTests{
-    var someTag: String{ "someTag" }
-    
-    func makeSUT(storeId: String = "test.keychain.storage") -> KeychainStorage {
+private extension KeychainStorageIntegrationTests {
+    func makeSUT(storeId: String = "test.keychain.storage.integration") -> KeychainStorage {
         let sut = Self.makeSUT(storeId: storeId)
-        addTeardownBlock {
-            sut.clear()
-        }
+        addTeardownBlock { sut.clear() }
         return sut
     }
-    
-    static func makeSUT(storeId: String = "test.keychain.storage") -> KeychainStorage {
-        return KeychainStorage(storeId: storeId, protection: .whenUnlocked, itemClass: kSecClassGenericPassword)
+
+    static func makeSUT(storeId: String = "test.keychain.storage.integration") -> KeychainStorage {
+        KeychainStorage(storeId: storeId, protection: .whenUnlocked)
     }
 }

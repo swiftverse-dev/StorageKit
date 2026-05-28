@@ -1,8 +1,6 @@
 //
 //  XCTestCase+trackForMemoryLeaks.swift
-//  StorageKitTestAppTests
-//
-//  Created by Lorenzo Limoli on 06/03/24.
+//  StorageKitTests
 //
 
 import XCTest

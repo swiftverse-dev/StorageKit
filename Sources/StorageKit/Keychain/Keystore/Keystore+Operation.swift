@@ -1,8 +1,6 @@
 //
 //  Keystore+Operation.swift
-//
-//
-//  Created by Lorenzo Limoli on 06/03/24.
+//  StorageKit
 //
 
 import Foundation
@@ -21,41 +19,41 @@ extension Keystore.Operation {
                 let status = CFErrorGetCode($0)
                 return Keystore.Error(from: Int32(status)) ?? Keystore.Error.keyGenerationError
             } ?? Keystore.Error.keyGenerationError
-            
+
         return try key.orThrow(keystoreError)
     }
-    
-    static func storeKey(using query: CFDictionary) throws {
-        let status = SecItemAdd(query, nil)
+
+    static func storeKey(using query: CFDictionary, with performer: KeychainPerforming) throws {
+        let status = performer.add(query)
         try Keystore.Error(from: status).throwIfExist()
     }
-    
-    static func loadPrivateKey(using query: CFDictionary) throws -> SecKey {
+
+    static func loadPrivateKey(using query: CFDictionary, with performer: KeychainPerforming) throws -> SecKey {
         var item: CFTypeRef?
-        let status = SecItemCopyMatching(query, &item)
-        
+        let status = performer.copyMatching(query, result: &item)
+
         try Keystore.Error(from: status).throwIfExist()
-        
+
         return (item as! SecKey)
     }
-    
+
     static func createKeyFromData(_ data: Data, using query: CFDictionary) throws -> SecKey {
         try SecKeyCreateWithData(data as CFData, query, nil)
             .orThrow(Keystore.Error.parsingError)
     }
-    
+
     static func extractPublicKey(from privateKey: SecKey) throws -> SecKey {
         try SecKeyCopyPublicKey(privateKey)
             .orThrow(Keystore.Error.parsingError)
     }
-    
-    static func deleteItem(using query: CFDictionary) -> Bool{
-        let status = SecItemDelete(query)
-        
+
+    static func deleteItem(using query: CFDictionary, with performer: KeychainPerforming) -> Bool{
+        let status = performer.delete(query)
+
         if Keychain.Error(from: status) != nil{
             return false
         }
-        
+
         return true
     }
 }
