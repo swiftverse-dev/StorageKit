@@ -5,6 +5,7 @@
 
 import Foundation
 import LocalAuthentication
+import Clocks
 @testable import StorageKit
 
 enum KeychainSUTFactory {
@@ -16,7 +17,10 @@ enum KeychainSUTFactory {
         policy: LAPolicy? = nil,
         performer: KeychainPerforming,
         accessGroup: String? = nil,
-        contextFactory: @escaping () -> LAContextProviding = { StubLAContext() }
+        promptMessage: String? = nil,
+        reuseContext: Keychain.ReuseContextMode = .never,
+        clock: any Clock<Duration> = TestClock(),
+        contextFactory: @escaping @Sendable () -> LAContextProviding = { StubLAContext() }
     ) -> KeychainStorage {
         KeychainStorage(
             storeId: storeId,
@@ -24,8 +28,11 @@ enum KeychainSUTFactory {
             accessControl: accessControl,
             policy: policy,
             accessGroup: accessGroup,
+            promptMessage: promptMessage,
+            reuseContext: reuseContext,
             performer: performer,
-            contextFactory: contextFactory
+            contextFactory: contextFactory,
+            clock: clock
         )
     }
 
@@ -36,7 +43,10 @@ enum KeychainSUTFactory {
         policy: LAPolicy? = nil,
         performer: KeychainPerforming,
         accessGroup: String? = nil,
-        contextFactory: @escaping () -> LAContextProviding = { StubLAContext() }
+        promptMessage: String? = nil,
+        reuseContext: Keychain.ReuseContextMode = .never,
+        clock: any Clock<Duration> = TestClock(),
+        contextFactory: @escaping @Sendable () -> LAContextProviding = { StubLAContext() }
     ) -> Keystore {
         Keystore(
             storeId: storeId,
@@ -44,8 +54,11 @@ enum KeychainSUTFactory {
             accessControl: accessControl,
             policy: policy,
             accessGroup: accessGroup,
+            promptMessage: promptMessage,
+            reuseContext: reuseContext,
             performer: performer,
-            contextFactory: contextFactory
+            contextFactory: contextFactory,
+            clock: clock
         )
     }
 }
