@@ -126,8 +126,9 @@ private extension EncryptedFileStorageTests{
     func makeSUT(folder: String? = nil) throws -> Storage{
         let folder = folder ?? folderTest
         let sut = try EncryptedFileStorage(root: root, folder: folder)
-        addTeardownBlock { [weak self] in
-            self?.clearDisk(forFolder: folder)
+        let folderURL = root.appendingPathComponent(folder)
+        addTeardownBlock {
+            try? FileManager.default.removeItem(at: folderURL)
         }
         return sut
     }
@@ -137,9 +138,4 @@ private extension EncryptedFileStorageTests{
             .appendingPathComponent(tag)
     }
 
-    func clearDisk(forFolder folder: String){
-        let fileManager = FileManager.default
-        let fileURL = root.appendingPathComponent(folder)
-        try? fileManager.removeItem(at: fileURL)
-    }
 }
