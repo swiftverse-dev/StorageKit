@@ -7,7 +7,11 @@
 
 import Foundation
 
-open class EncryptedFileStorage: Storage{
+// `@unchecked Sendable`: the class is `open` so a checked conformance is not
+// possible; all stored state is immutable `let` of Sendable types, so any
+// instance is safe to share across concurrency domains. Subclasses must not add
+// unsynchronised mutable state.
+open class EncryptedFileStorage: Storage, @unchecked Sendable {
     
     public enum Error: Swift.Error{
         case itemNotFound
@@ -19,7 +23,6 @@ open class EncryptedFileStorage: Storage{
     
     private static let defaultFolder = Bundle(for: EncryptedFileStorage.self).bundleIdentifier ?? "" + ".encryptedFile.storage"
     
-    private let fileManager = FileManager.default
     public let folderURL: URL
     public let writingOptions: Data.WritingOptions
     public let readingOptions: Data.ReadingOptions
@@ -37,7 +40,7 @@ open class EncryptedFileStorage: Storage{
         
         var folderURL = root
         if folderURL == nil{
-            folderURL = try fileManager.url(
+            folderURL = try FileManager.default.url(
                     for: .documentDirectory,
                     in: .userDomainMask,
                     appropriateFor: nil,
@@ -119,14 +122,14 @@ public extension EncryptedFileStorage{
     @discardableResult
     func deleteItem(withTag tag: String) -> Bool {
         let fileURL = fileURL(withName: tag)
-        guard let _ = try? fileManager.removeItem(at: fileURL) else { return false }
+        guard let _ = try? FileManager.default.removeItem(at: fileURL) else { return false }
         return true
     }
     
     @discardableResult
     func clear() -> Bool {
         do {
-            try fileManager.removeItem(at: folderURL)
+            try FileManager.default.removeItem(at: folderURL)
             return true
         } catch {
             print(error)
