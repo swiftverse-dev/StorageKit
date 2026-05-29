@@ -19,8 +19,10 @@ struct StorageKitTestApp: App {
     }
     
     func test() throws {
-        let keychain = KeychainBiometricStorage.default
-        keychain.reuseContext = .forInterval(10)
+        let keychain = KeychainBiometricStorage(
+            storeId: "default.biometric.storage",
+            reuseContextMode: .forInterval(10)
+        )
         
         try keychain.save(Data("ciao".utf8), withTag: "a")
         try keychain.save(Data("ciao".utf8), withTag: "b")
