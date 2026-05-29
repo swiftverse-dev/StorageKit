@@ -8,7 +8,7 @@
 import Foundation
 
 public extension Keychain {
-    enum ReuseContextMode {
+    enum ReuseContextMode: Sendable {
         case always
         case never
         case forInterval(TimeInterval)
