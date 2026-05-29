@@ -21,7 +21,9 @@ final class ContextStore: Sendable {
         var expiryTask: Task<Void, Never>?
     }
 
-    private let state = OSAllocatedUnfairLock(initialState: State())
+    // `uncheckedState:` (not `initialState:`) because `State` holds a non-Sendable
+    // `LAContextProviding?`; the lock is what guarantees safe access.
+    private let state = OSAllocatedUnfairLock(uncheckedState: State())
     private let mode: Keychain.ReuseContextMode
     private let factory: @Sendable () -> LAContextProviding
     private let clock: any Clock<Duration>
