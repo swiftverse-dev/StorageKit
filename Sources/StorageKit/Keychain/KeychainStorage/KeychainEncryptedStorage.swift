@@ -7,7 +7,7 @@
 
 import Foundation
 
-public final class KeychainEncryptedStorage: KeychainStorage {
+public final class KeychainEncryptedStorage: KeychainStorage, @unchecked Sendable {
 
     private static let defaultStoreId = "default.encrypted.storage"
     public static let `default` = KeychainEncryptedStorage(storeId: defaultStoreId)
