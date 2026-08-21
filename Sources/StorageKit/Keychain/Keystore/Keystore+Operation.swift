@@ -23,12 +23,12 @@ extension Keystore.Operation {
         return try key.orThrow(keystoreError)
     }
 
-    static func storeKey(using query: CFDictionary, with performer: KeychainPerforming) throws {
+    static func storeKey(using query: CFDictionary, with performer: any KeychainPerforming) throws {
         let status = performer.add(query)
         try Keystore.Error(from: status).throwIfExist()
     }
 
-    static func loadPrivateKey(using query: CFDictionary, with performer: KeychainPerforming) throws -> SecKey {
+    static func loadPrivateKey(using query: CFDictionary, with performer: any KeychainPerforming) throws -> SecKey {
         var item: CFTypeRef?
         let status = performer.copyMatching(query, result: &item)
 
@@ -47,7 +47,7 @@ extension Keystore.Operation {
             .orThrow(Keystore.Error.parsingError)
     }
 
-    static func deleteItem(using query: CFDictionary, with performer: KeychainPerforming) -> Bool{
+    static func deleteItem(using query: CFDictionary, with performer: any KeychainPerforming) -> Bool{
         let status = performer.delete(query)
 
         if Keychain.Error(from: status) != nil{

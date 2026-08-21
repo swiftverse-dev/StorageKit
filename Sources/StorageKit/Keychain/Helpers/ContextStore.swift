@@ -17,7 +17,7 @@ import os
 final class ContextStore: Sendable {
 
     private struct State {
-        var context: LAContextProviding?
+        var context: (any LAContextProviding)?
         var expiryTask: Task<Void, Never>?
     }
 
@@ -25,12 +25,12 @@ final class ContextStore: Sendable {
     // `LAContextProviding?`; the lock is what guarantees safe access.
     private let state = OSAllocatedUnfairLock(uncheckedState: State())
     private let mode: Keychain.ReuseContextMode
-    private let factory: @Sendable () -> LAContextProviding
+    private let factory: @Sendable () -> any LAContextProviding
     private let clock: any Clock<Duration>
 
     init(
         mode: Keychain.ReuseContextMode,
-        factory: @escaping @Sendable () -> LAContextProviding,
+        factory: @escaping @Sendable () -> any LAContextProviding,
         clock: any Clock<Duration>
     ) {
         self.mode = mode
@@ -45,7 +45,7 @@ final class ContextStore: Sendable {
     /// Note: for `.always`/`.forInterval`, the returned context is shared and may
     /// be invalidated by a concurrent TTL expiry shortly after it is returned;
     /// callers must be prepared to handle an invalidated `LAContext`.
-    func context() -> LAContextProviding {
+    func context() -> any LAContextProviding {
         switch mode {
         case .never:
             return factory()

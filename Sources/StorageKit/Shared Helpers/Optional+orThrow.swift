@@ -8,7 +8,7 @@
 import Foundation
 
 extension Optional {
-    func orThrow(_ error: Error) throws -> Wrapped {
+    func orThrow(_ error: any Error) throws -> Wrapped {
         guard let wrapped = self else {
             throw error
         }

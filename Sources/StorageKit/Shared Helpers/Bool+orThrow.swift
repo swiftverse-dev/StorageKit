@@ -8,7 +8,7 @@
 import Foundation
 
 extension Bool {
-    func orThrow(_ error: Error) throws {
+    func orThrow(_ error: any Error) throws {
         if !self { throw error }
     }
 }

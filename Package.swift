@@ -15,7 +15,10 @@ let package = Package(
         .package(url: "https://github.com/pointfreeco/swift-clocks", from: "1.0.0"),
     ],
     targets: [
-        .target(name: "StorageKit"),
+        .target(
+            name: "StorageKit",
+            swiftSettings: [.enableUpcomingFeature("ExistentialAny")]
+        ),
         .testTarget(
             name: "StorageKitTests",
             dependencies: [

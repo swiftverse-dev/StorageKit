@@ -44,8 +44,8 @@ public final class Keystore: Keychain, @unchecked Sendable {
         accessGroup: String?,
         promptMessage: String? = nil,
         reuseContext: ReuseContextMode = .never,
-        performer: KeychainPerforming,
-        contextFactory: @escaping @Sendable () -> LAContextProviding,
+        performer: any KeychainPerforming,
+        contextFactory: @escaping @Sendable () -> any LAContextProviding,
         clock: any Clock<Duration> = ContinuousClock()
     ) {
         super.init(
