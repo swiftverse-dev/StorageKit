@@ -24,7 +24,8 @@ let package = Package(
             dependencies: [
                 "StorageKit",
                 .product(name: "Clocks", package: "swift-clocks"),
-            ]
+            ],
+            swiftSettings: [.enableUpcomingFeature("ExistentialAny")]
         )
     ],
     swiftLanguageModes: [.v6]

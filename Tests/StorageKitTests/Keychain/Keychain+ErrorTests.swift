@@ -3,52 +3,57 @@
 //  StorageKitTests
 //
 
-import XCTest
+import Foundation
+import Testing
 @testable import StorageKit
 
-final class KeychainErrorTests: XCTestCase {
+final class KeychainErrorTests: LeakTrackingTestCase {
 
-    func test_loadData_throwsItemNotFound_whenFakeReportsItemNotFound() {
-        let fake = InMemoryKeychain()
-        fake.copyStatusOverride = errSecItemNotFound
-        let sut = KeychainSUTFactory.makeKeychainStorage(performer: fake)
+    @Test func `loadData throws itemNotFound when the keychain reports errSecItemNotFound`() {
+        let sut = makeSUT(copyStatus: errSecItemNotFound)
 
-        XCTAssertThrowsError(try sut.loadData(withTag: "anything")) { error in
-            XCTAssertEqual(error as? Keychain.Error, .itemNotFound)
+        #expect(throws: Keychain.Error.itemNotFound) {
+            try sut.loadData(withTag: "anything")
         }
     }
 
-    func test_loadData_throwsAuthenticationFailure_whenFakeReportsErrSecAuthFailed() {
-        let fake = InMemoryKeychain()
-        fake.copyStatusOverride = errSecAuthFailed
-        let sut = KeychainSUTFactory.makeKeychainStorage(performer: fake)
+    @Test func `loadData throws authenticationFailure when the keychain reports errSecAuthFailed`() {
+        let sut = makeSUT(copyStatus: errSecAuthFailed)
 
-        XCTAssertThrowsError(try sut.loadData(withTag: "anything")) { error in
-            XCTAssertEqual(error as? Keychain.Error, .authenticationFailure)
+        #expect(throws: Keychain.Error.authenticationFailure) {
+            try sut.loadData(withTag: "anything")
         }
     }
 
-    func test_loadData_throwsUnexpectedFailure_onUnknownStatus() {
-        let fake = InMemoryKeychain()
-        fake.copyStatusOverride = -99999
-        let sut = KeychainSUTFactory.makeKeychainStorage(performer: fake)
+    @Test func `loadData throws unexpectedFailure on an unknown status`() {
+        let sut = makeSUT(copyStatus: -99999)
 
-        XCTAssertThrowsError(try sut.loadData(withTag: "anything")) { error in
-            XCTAssertEqual(error as? Keychain.Error, .unexpectedFailure)
+        #expect(throws: Keychain.Error.unexpectedFailure) {
+            try sut.loadData(withTag: "anything")
         }
     }
 
-    func test_keychainErrorInit_returnsNilForSuccess() {
-        XCTAssertNil(Keychain.Error(from: errSecSuccess))
-        XCTAssertNil(Keychain.Error(from: noErr))
+    @Test func `error init returns nil for a success status`() {
+        #expect(Keychain.Error(from: errSecSuccess) == nil)
+        #expect(Keychain.Error(from: noErr) == nil)
     }
 
-    func test_keychainErrorInit_mapsKnownStatusCodes() {
-        XCTAssertEqual(Keychain.Error(from: errSecUserCanceled), .userCancelOperation)
-        XCTAssertEqual(Keychain.Error(from: errSecNotAvailable), .storeNotAvailable)
-        XCTAssertEqual(Keychain.Error(from: errSecItemNotFound), .itemNotFound)
-        XCTAssertEqual(Keychain.Error(from: errSecInteractionNotAllowed), .passcodeDisabled)
-        XCTAssertEqual(Keychain.Error(from: errSecDecode), .decodeFailure)
-        XCTAssertEqual(Keychain.Error(from: errSecAuthFailed), .authenticationFailure)
+    @Test func `error init maps the known status codes`() {
+        #expect(Keychain.Error(from: errSecUserCanceled) == .userCancelOperation)
+        #expect(Keychain.Error(from: errSecNotAvailable) == .storeNotAvailable)
+        #expect(Keychain.Error(from: errSecItemNotFound) == .itemNotFound)
+        #expect(Keychain.Error(from: errSecInteractionNotAllowed) == .passcodeDisabled)
+        #expect(Keychain.Error(from: errSecDecode) == .decodeFailure)
+        #expect(Keychain.Error(from: errSecAuthFailed) == .authenticationFailure)
+    }
+}
+
+private extension KeychainErrorTests {
+    func makeSUT(copyStatus: OSStatus) -> KeychainStorage {
+        let fake = InMemoryKeychain()
+        fake.copyStatusOverride = copyStatus
+        let sut = KeychainSUTFactory.makeKeychainStorage(performer: fake)
+        trackForMemoryLeaks(sut)
+        return sut
     }
 }

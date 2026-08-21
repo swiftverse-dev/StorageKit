@@ -3,44 +3,52 @@
 //  StorageKitTests
 //
 
-import XCTest
+import Foundation
+import Testing
 @testable import StorageKit
 
-final class KeystoreInstanceTests: XCTestCase {
+final class KeystoreInstanceTests: LeakTrackingTestCase {
 
-    func test_loadKey_throwsItemNotFound_forUnknownTag() {
-        let fake = InMemoryKeychain()
-        let sut = KeychainSUTFactory.makeKeystore(performer: fake)
+    @Test func `loadKey throws itemNotFound for an unknown tag`() {
+        let sut = makeSUT(performer: InMemoryKeychain())
 
-        XCTAssertThrowsError(try sut.loadKey(for: "unknown")) { error in
-            XCTAssertEqual(error as? Keystore.Error, .keychainError(.itemNotFound))
+        #expect(throws: Keystore.Error.keychainError(.itemNotFound)) {
+            try sut.loadKey(for: "unknown")
         }
     }
 
-    func test_deleteKey_returnsFalse_forUnknownTag() {
-        let fake = InMemoryKeychain()
-        let sut = KeychainSUTFactory.makeKeystore(performer: fake)
-        XCTAssertFalse(sut.deleteKey(for: "unknown"))
+    @Test func `deleteKey returns false for an unknown tag`() {
+        let sut = makeSUT(performer: InMemoryKeychain())
+
+        #expect(sut.deleteKey(for: "unknown") == false)
     }
 
-    func test_keyFromDataStoreWithTag_storesItemUnderPrefixedApplicationTag() throws {
+    @Test func `storing a private key uses the prefixed application tag`() throws {
         let fake = InMemoryKeychain()
-        let sut = KeychainSUTFactory.makeKeystore(storeId: "test.keystore", performer: fake)
+        let sut = makeSUT(storeId: "test.keystore", performer: fake)
 
-        _ = try sut.keyFrom(.private(.rsa, data: KeystoreStaticTests.privatePkcs1Base64), storingWithTag: "knownTag")
+        _ = try sut.keyFrom(.private(.rsa, data: KeyFixtures.privatePkcs1Base64), storingWithTag: "knownTag")
 
-        XCTAssertEqual(fake.items.count, 1)
-        let stored = fake.items.values.first!
-        XCTAssertEqual(stored[kSecAttrApplicationTag as String] as? String, "test.keystore.knownTag")
-        XCTAssertEqual(stored[kSecClass as String] as? String, kSecClassKey as String)
+        #expect(fake.items.count == 1)
+        let stored = try #require(fake.items.values.first)
+        #expect(stored[kSecAttrApplicationTag as String] as? String == "test.keystore.knownTag")
+        #expect(stored[kSecClass as String] as? String == kSecClassKey as String)
     }
 
-    func test_keyFromDataStoreWithTag_doesNotStorePublicKeys() throws {
+    @Test func `storing a public key does not touch the keychain`() throws {
         let fake = InMemoryKeychain()
-        let sut = KeychainSUTFactory.makeKeystore(storeId: "test.keystore", performer: fake)
+        let sut = makeSUT(storeId: "test.keystore", performer: fake)
 
-        _ = try sut.keyFrom(.public(.rsa, data: KeystoreStaticTests.publicX509), storingWithTag: "knownTag")
+        _ = try sut.keyFrom(.public(.rsa, data: KeyFixtures.publicX509), storingWithTag: "knownTag")
 
-        XCTAssertEqual(fake.items.count, 0)
+        #expect(fake.items.isEmpty)
+    }
+}
+
+private extension KeystoreInstanceTests {
+    func makeSUT(storeId: String = "test.keystore", performer: any KeychainPerforming) -> Keystore {
+        let sut = KeychainSUTFactory.makeKeystore(storeId: storeId, performer: performer)
+        trackForMemoryLeaks(sut)
+        return sut
     }
 }

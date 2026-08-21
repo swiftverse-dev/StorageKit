@@ -15,12 +15,12 @@ enum KeychainSUTFactory {
         protection: Keychain.Protection = .whenUnlocked,
         accessControl: Keychain.AccessControl = [],
         policy: LAPolicy? = nil,
-        performer: KeychainPerforming,
+        performer: any KeychainPerforming,
         accessGroup: String? = nil,
         promptMessage: String? = nil,
         reuseContext: Keychain.ReuseContextMode = .never,
         clock: any Clock<Duration> = TestClock(),
-        contextFactory: @escaping @Sendable () -> LAContextProviding = { StubLAContext() }
+        contextFactory: @escaping @Sendable () -> any LAContextProviding = { StubLAContext() }
     ) -> KeychainStorage {
         KeychainStorage(
             storeId: storeId,
@@ -41,12 +41,12 @@ enum KeychainSUTFactory {
         protection: Keychain.Protection = .whenUnlocked,
         accessControl: Keychain.AccessControl = [],
         policy: LAPolicy? = nil,
-        performer: KeychainPerforming,
+        performer: any KeychainPerforming,
         accessGroup: String? = nil,
         promptMessage: String? = nil,
         reuseContext: Keychain.ReuseContextMode = .never,
         clock: any Clock<Duration> = TestClock(),
-        contextFactory: @escaping @Sendable () -> LAContextProviding = { StubLAContext() }
+        contextFactory: @escaping @Sendable () -> any LAContextProviding = { StubLAContext() }
     ) -> Keystore {
         Keystore(
             storeId: storeId,

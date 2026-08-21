@@ -3,118 +3,104 @@
 //  StorageKitTests
 //
 
-import XCTest
+import Foundation
+import Testing
 import StorageKit
 
-protocol StorageTests: XCTestCase {
+/// Shared behaviour assertions every `Storage` implementation must satisfy.
+///
+/// This was previously `protocol StorageTests: XCTestCase` whose requirements
+/// were the 13 test methods themselves — that existed only so XCTest's runtime
+/// discovery would pick them up off the concrete class. Swift Testing discovers
+/// through `@Test`, so the protocol is now purely a bag of shared assertions
+/// plus the conformer's error type.
+protocol StorageTests {
     associatedtype Error: Swift.Error & Equatable
-
-    func test_saveData_succeeds() throws
-    func test_saveData_overridesPreviouslyStoredValue() throws
-
-    func test_saveObject_succeeds() throws
-    func test_saveObject_overridesPreviouslyStoredValue() throws
-
-    func test_loadData_throwsItemNotFoundOnUnknownTag() throws
-    func test_loadData_returnsTheDataPreviouslySaved() throws
-
-    func test_loadObj_throwsItemNotFoundOnUnknownTag() throws
-    func test_loadObj_returnsTheDataPreviouslySaved() throws
-    func test_loadObj_throwsDecodeFailureOnWrongObjectSchema() throws
-
-    func test_delete_returnsFalseOnUnknownTag() throws
-    func test_delete_returnsTrueOnKnownTag() throws
-    func test_clear_returnsTrueWhenDeletesAllTheItemsOfTheStorage() throws
-    func test_clear_returnsFalseWhenThereAreNoItemsInTheStorage() throws
 }
 
-extension StorageTests{
-    func assert_saveData_succeeds(sut: Storage, someTag: String, file: StaticString = #file, line: UInt = #line){
+extension StorageTests {
+    func assert_saveData_succeeds(sut: any Storage, someTag: String, sourceLocation: SourceLocation = #_sourceLocation) {
         let someData = someData
         expect(error: nil, whileExecuting: {
             try sut.save(someData, withTag: someTag)
-        }, file: file, line: line)
+        }, sourceLocation: sourceLocation)
     }
 
-
-    func assert_saveData_overridesPreviouslyStoredValue(sut: Storage, someTag: String, file: StaticString = #file, line: UInt = #line) throws{
-
-        let firstData = "firstData".data(using: .utf8)!
+    func assert_saveData_overridesPreviouslyStoredValue(sut: any Storage, someTag: String, sourceLocation: SourceLocation = #_sourceLocation) throws {
+        let firstData = Data("firstData".utf8)
         try sut.save(firstData, withTag: someTag)
 
-        let lastData = "lastData".data(using: .utf8)!
+        let lastData = Data("lastData".utf8)
         try sut.save(lastData, withTag: someTag)
 
-        expect(sut, toRetrieveDataResult: .success(lastData), for: someTag, file: file, line: line)
+        expect(sut, toRetrieveDataResult: .success(lastData), for: someTag, sourceLocation: sourceLocation)
     }
 
-    func assert_saveObject_succeeds(sut: Storage, someTag: String, file: StaticString = #file, line: UInt = #line){
+    func assert_saveObject_succeeds(sut: any Storage, someTag: String, sourceLocation: SourceLocation = #_sourceLocation) {
         let someTestObj = someTestObject()
 
         expect(error: nil, whileExecuting: {
             try sut.save(someTestObj, withTag: someTag)
-        }, file: file, line: line)
+        }, sourceLocation: sourceLocation)
     }
 
-    func assert_saveObject_overridesPreviouslyStoredValue(sut: Storage, someTag: String, file: StaticString = #file, line: UInt = #line) throws{
-
+    func assert_saveObject_overridesPreviouslyStoredValue(sut: any Storage, someTag: String, sourceLocation: SourceLocation = #_sourceLocation) throws {
         let firstData = someTestObject(message: "Message1", value: 1)
         try sut.save(firstData, withTag: someTag)
 
         let lastData = someTestObject(message: "Message2", value: 2)
         try sut.save(lastData, withTag: someTag)
 
-        expect(sut, toRetrieveObjectResult: .success(lastData), for: someTag, file: file, line: line)
+        expect(sut, toRetrieveObjectResult: .success(lastData), for: someTag, sourceLocation: sourceLocation)
     }
 
-    func assert_loadData_throwsItemNotFoundOnUnknownTag(sut: Storage, error: Error, file: StaticString = #file, line: UInt = #line) throws{
+    func assert_loadData_throwsItemNotFoundOnUnknownTag(sut: any Storage, error: Error, sourceLocation: SourceLocation = #_sourceLocation) throws {
         let unknownTag = "unknownTag"
 
-        expect(sut, toRetrieveDataResult: .failure(error), for: unknownTag, file: file, line: line)
+        expect(sut, toRetrieveDataResult: .failure(error), for: unknownTag, sourceLocation: sourceLocation)
     }
 
-    func assert_loadData_returnsTheDataPreviouslySaved(sut: Storage, someTag: String, file: StaticString = #file, line: UInt = #line) throws{
+    func assert_loadData_returnsTheDataPreviouslySaved(sut: any Storage, someTag: String, sourceLocation: SourceLocation = #_sourceLocation) throws {
         let someData = someData
 
         try sut.save(someData, withTag: someTag)
-        expect(sut, toRetrieveDataResult: .success(someData), for: someTag, file: file, line: line)
+        expect(sut, toRetrieveDataResult: .success(someData), for: someTag, sourceLocation: sourceLocation)
     }
 
-    func assert_loadObj_throwsItemNotFoundOnUnknownTag(sut: Storage, error: Error, file: StaticString = #file, line: UInt = #line) throws{
+    func assert_loadObj_throwsItemNotFoundOnUnknownTag(sut: any Storage, error: Error, sourceLocation: SourceLocation = #_sourceLocation) throws {
         let unknownTag = "unknownTag"
 
-        expect(sut, toRetrieveObjectResult: .failure(error), for: unknownTag, file: file, line: line)
+        expect(sut, toRetrieveObjectResult: .failure(error), for: unknownTag, sourceLocation: sourceLocation)
     }
 
-    func assert_loadObj_returnsTheDataPreviouslySaved(sut: Storage, someTag: String, file: StaticString = #file, line: UInt = #line) throws{
+    func assert_loadObj_returnsTheDataPreviouslySaved(sut: any Storage, someTag: String, sourceLocation: SourceLocation = #_sourceLocation) throws {
         let someObj = someTestObject()
 
         try sut.save(someObj, withTag: someTag)
-        expect(sut, toRetrieveObjectResult: .success(someObj), for: someTag, file: file, line: line)
+        expect(sut, toRetrieveObjectResult: .success(someObj), for: someTag, sourceLocation: sourceLocation)
     }
 
-    func assert_loadObj_throwsDecodeFailureOnWrongObjectSchema(sut: Storage, someTag: String, error: Error, file: StaticString = #file, line: UInt = #line) throws{
-
+    func assert_loadObj_throwsDecodeFailureOnWrongObjectSchema(sut: any Storage, someTag: String, error: Error, sourceLocation: SourceLocation = #_sourceLocation) throws {
         let someObj = "SomeObj"
         try sut.save(someObj, withTag: someTag)
 
-        expect(sut, toRetrieveObjectResult: .failure(error), for: someTag, file: file, line: line)
+        expect(sut, toRetrieveObjectResult: .failure(error), for: someTag, sourceLocation: sourceLocation)
     }
 
-    func assert_delete_returnsFalseOnUnknownTag(sut: Storage, file: StaticString = #file, line: UInt = #line){
+    func assert_delete_returnsFalseOnUnknownTag(sut: any Storage, sourceLocation: SourceLocation = #_sourceLocation) {
         let unknownTag = "unknownTag"
 
-        XCTAssertFalse(sut.deleteItem(withTag: unknownTag), file: file, line: line)
+        #expect(sut.deleteItem(withTag: unknownTag) == false, sourceLocation: sourceLocation)
     }
 
-    func assert_delete_returnsTrueOnKnownTag(sut: Storage, someTag: String, file: StaticString = #file, line: UInt = #line) throws{
+    func assert_delete_returnsTrueOnKnownTag(sut: any Storage, someTag: String, sourceLocation: SourceLocation = #_sourceLocation) throws {
         let someData = someData
 
         try sut.save(someData, withTag: someTag)
-        XCTAssertTrue(sut.deleteItem(withTag: someTag), file: file, line: line)
+        #expect(sut.deleteItem(withTag: someTag), sourceLocation: sourceLocation)
     }
 
-    func assert_clear_returnsTrueWhenDeletesAllTheItemsOfTheStorage(sut: (String) throws -> Storage, file: StaticString = #file, line: UInt = #line) throws {
+    func assert_clear_returnsTrueWhenDeletesAllTheItemsOfTheStorage(sut: (String) throws -> any Storage, sourceLocation: SourceLocation = #_sourceLocation) throws {
         let someData = Data("someData".utf8)
         let sut1 = try sut("test.folder1")
         try sut1.save(someData, withTag: "tag1")
@@ -123,96 +109,85 @@ extension StorageTests{
         let sut2 = try sut("test.folder2")
         try sut2.save(someData, withTag: "tag1")
 
-        XCTAssertTrue(sut1.clear(), file: file, line: line)
-        XCTAssertThrowsError(try sut1.loadData(withTag: "tag1"), file: file, line: line)
-        XCTAssertThrowsError(try sut1.loadData(withTag: "tag2"), file: file, line: line)
+        #expect(sut1.clear(), sourceLocation: sourceLocation)
+        #expect(throws: (any Swift.Error).self, sourceLocation: sourceLocation) { try sut1.loadData(withTag: "tag1") }
+        #expect(throws: (any Swift.Error).self, sourceLocation: sourceLocation) { try sut1.loadData(withTag: "tag2") }
 
-        XCTAssertEqual(try sut2.loadData(withTag: "tag1"), someData, file: file, line: line)
+        #expect(try sut2.loadData(withTag: "tag1") == someData, sourceLocation: sourceLocation)
     }
 
-    func assert_clear_returnsFalseWhenThereAreNoItemsInTheStorage(sut: Storage, file: StaticString = #file, line: UInt = #line) throws {
-        XCTAssertFalse(sut.clear(), file: file, line: line)
+    func assert_clear_returnsFalseWhenThereAreNoItemsInTheStorage(sut: any Storage, sourceLocation: SourceLocation = #_sourceLocation) throws {
+        #expect(sut.clear() == false, sourceLocation: sourceLocation)
     }
 }
 
-fileprivate struct TestObject: Codable, Equatable{
+fileprivate struct TestObject: Codable, Equatable {
     let message: String
     let value: Int
 }
 
-private extension StorageTests{
+private extension StorageTests {
 
-    var someData: Data{ "some data".data(using: .utf8)! }
-    var someTag: String{ "someTag" }
-    func someTestObject(message: String? = nil, value: Int? = nil) -> TestObject{
+    var someData: Data { Data("some data".utf8) }
+    var someTag: String { "someTag" }
+    func someTestObject(message: String? = nil, value: Int? = nil) -> TestObject {
         .init(message: message ?? "This is a message", value: value ?? 10)
     }
 
-    func makeSUT(tagToDelete: String? = nil) -> Storage{
-        let sut = try! EncryptedFileStorage(folder: "test.encryptedFile.storage")
-        let someTag = tagToDelete ?? someTag
-        addTeardownBlock {
-            sut.deleteItem(withTag: someTag)
-        }
-        return sut
-    }
-
-    func expect(_ sut: Storage, toRetrieveDataResult result: Result<Data, Error>, for tag: String, file: StaticString = #file, line: UInt = #line){
-        var retrievedResult: Result<Data, Swift.Error>
-        do{
+    func expect(_ sut: any Storage, toRetrieveDataResult result: Result<Data, Error>, for tag: String, sourceLocation: SourceLocation = #_sourceLocation) {
+        var retrievedResult: Result<Data, any Swift.Error>
+        do {
             let data = try sut.loadData(withTag: tag)
             retrievedResult = .success(data)
-        }catch{
+        } catch {
             retrievedResult = .failure(error)
         }
 
-        switch (retrievedResult, result){
+        switch (retrievedResult, result) {
         case let (.success(retrievedData), .success(expectedData)):
-            XCTAssertEqual(retrievedData, expectedData, file: file, line: line)
+            #expect(retrievedData == expectedData, sourceLocation: sourceLocation)
 
         case let (.failure(retrievedError as Error), .failure(expectedError)):
-            XCTAssertEqual(retrievedError, expectedError, file: file, line: line)
+            #expect(retrievedError == expectedError, sourceLocation: sourceLocation)
 
         default:
-            XCTFail("Expected \(result), got \(retrievedResult) instead", file: file, line: line)
+            Issue.record("Expected \(result), got \(retrievedResult) instead", sourceLocation: sourceLocation)
         }
     }
 
-    func expect(_ sut: Storage, toRetrieveObjectResult result: Result<TestObject, Error>, for tag: String, file: StaticString = #file, line: UInt = #line){
-        var retrievedResult: Result<TestObject, Swift.Error>
-        do{
+    func expect(_ sut: any Storage, toRetrieveObjectResult result: Result<TestObject, Error>, for tag: String, sourceLocation: SourceLocation = #_sourceLocation) {
+        var retrievedResult: Result<TestObject, any Swift.Error>
+        do {
             let obj: TestObject = try sut.loadObject(withTag: tag)
             retrievedResult = .success(obj)
-        }catch{
+        } catch {
             retrievedResult = .failure(error)
         }
 
-        switch (retrievedResult, result){
+        switch (retrievedResult, result) {
         case let (.success(retrievedData), .success(expectedData)):
-            XCTAssertEqual(retrievedData, expectedData, file: file, line: line)
+            #expect(retrievedData == expectedData, sourceLocation: sourceLocation)
 
         case let (.failure(retrievedError as Error), .failure(expectedError)):
-            XCTAssertEqual(retrievedError, expectedError, file: file, line: line)
+            #expect(retrievedError == expectedError, sourceLocation: sourceLocation)
 
         default:
-            XCTFail("Expected \(result), got \(retrievedResult) instead", file: file, line: line)
+            Issue.record("Expected \(result), got \(retrievedResult) instead", sourceLocation: sourceLocation)
         }
     }
 
-    func expect(error: Error?, whileExecuting block: () throws -> Any, file: StaticString = #file, line: UInt = #line){
-        let expectError = error != nil
-        do{
+    func expect(error: Error?, whileExecuting block: () throws -> Any, sourceLocation: SourceLocation = #_sourceLocation) {
+        do {
             let result = try block()
-            if expectError{
-                XCTFail("Expected \(error!), got \(result) instead", file: file, line: line)
+            if let error {
+                Issue.record("Expected \(error), got \(result) instead", sourceLocation: sourceLocation)
             }
-
-        }catch let catchedError{
-            guard expectError else{
-                XCTFail("Expected nil, got \(catchedError) instead", file: file, line: line)
+        } catch let caughtError {
+            guard let error else {
+                Issue.record("Expected nil, got \(caughtError) instead", sourceLocation: sourceLocation)
                 return
             }
-            XCTAssertEqual(error, catchedError as? Error, file: file, line: line)
+            #expect(caughtError as? Error == error, sourceLocation: sourceLocation)
         }
     }
 }
