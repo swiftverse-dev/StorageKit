@@ -5,50 +5,61 @@
 //  Integration tests — exercise real SecKey generation and keychain round-trips.
 //
 
-import XCTest
+import Foundation
+import Testing
 import StorageKit
 
-final class KeystoreIntegrationTests: XCTestCase {
+final class KeystoreIntegrationTests {
 
-    func test_generateKeyWithTag_storesAndLoadsKey() throws {
+    // Real keychain, parallel tests: each one gets its own store so the shared
+    // `knownTag` can't collide.
+    private let runId = UUID().uuidString.prefix(8)
+
+    @Test func `generating a key with a tag stores and loads it`() throws {
         let sut = makeSUT()
         defer { sut.deleteKey(for: "knownTag") }
 
-        XCTAssertNoThrow(try sut.generate(key: .rsa, forTag: "knownTag"))
-        XCTAssertNoThrow(try sut.loadKey(for: "knownTag"))
+        _ = try sut.generate(key: .rsa, forTag: "knownTag")
+        _ = try sut.loadKey(for: "knownTag")
     }
 
-    func test_generateKeyWithTag_overridesPreviouslyStoredKey() throws {
+    @Test func `generating a key with a tag overrides the previously stored key`() throws {
         let sut = makeSUT()
         defer { sut.deleteKey(for: "knownTag") }
 
         let first = try sut.generate(key: .rsa, forTag: "knownTag")
         let second = try sut.generate(key: .rsa, forTag: "knownTag")
 
-        XCTAssertNotEqual(first.data, second.data)
+        #expect(first.data != second.data)
         let loaded = try sut.loadKey(for: "knownTag")
-        XCTAssertEqual(loaded.data, second.data)
+        #expect(loaded.data == second.data)
     }
 
-    func test_loadKey_throwsItemNotFound_forUnknownTag() {
+    @Test func `loading an unknown tag throws`() {
         let sut = makeSUT()
-        XCTAssertThrowsError(try sut.loadKey(for: "unknownTag"))
+
+        #expect(throws: (any Error).self) {
+            try sut.loadKey(for: "unknownTag")
+        }
     }
 
-    func test_deleteKey_returnsFalseForUnknownTag() {
+    @Test func `deleting an unknown tag returns false`() {
         let sut = makeSUT()
-        XCTAssertFalse(sut.deleteKey(for: "unknownTag"))
+
+        #expect(sut.deleteKey(for: "unknownTag") == false)
     }
 
-    func test_deleteKey_returnsTrueOnPreviouslyStoredTag() throws {
+    @Test func `deleting a previously stored tag returns true`() throws {
         let sut = makeSUT()
+
         _ = try sut.generate(key: .rsa, forTag: "knownTag")
-        XCTAssertTrue(sut.deleteKey(for: "knownTag"))
+
+        #expect(sut.deleteKey(for: "knownTag"))
     }
 }
 
 private extension KeystoreIntegrationTests {
     func makeSUT() -> Keystore {
-        Keystore(storeId: "test.keystore.integration", protection: .whenUnlocked)
+        Keystore(storeId: "test.keystore.integration.\(runId)", protection: .whenUnlocked)
     }
 }
