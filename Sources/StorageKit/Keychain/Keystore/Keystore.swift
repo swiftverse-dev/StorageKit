@@ -8,7 +8,7 @@
 import Foundation
 import LocalAuthentication
 
-public final class Keystore: Keychain {
+public final class Keystore: Keychain, @unchecked Sendable {
     public static let defaultStoreId = "default.keystore"
     public static let `default` = Keystore(
         storeId: defaultStoreId,
@@ -20,7 +20,9 @@ public final class Keystore: Keychain {
         protection: Protection,
         accessControl: AccessControl = [],
         policy: LAPolicy? = nil,
-        accessGroup: String? = nil
+        accessGroup: String? = nil,
+        promptMessage: String? = nil,
+        reuseContext: ReuseContextMode = .never
     ) {
         super.init(
             storeId: storeId,
@@ -28,7 +30,9 @@ public final class Keystore: Keychain {
             accessControl: accessControl,
             policy: policy,
             itemClass: kSecClassKey,
-            accessGroup: accessGroup
+            accessGroup: accessGroup,
+            promptMessage: promptMessage,
+            reuseContext: reuseContext
         )
     }
 
@@ -38,8 +42,11 @@ public final class Keystore: Keychain {
         accessControl: AccessControl,
         policy: LAPolicy?,
         accessGroup: String?,
+        promptMessage: String? = nil,
+        reuseContext: ReuseContextMode = .never,
         performer: KeychainPerforming,
-        contextFactory: @escaping () -> LAContextProviding
+        contextFactory: @escaping @Sendable () -> LAContextProviding,
+        clock: any Clock<Duration> = ContinuousClock()
     ) {
         super.init(
             storeId: storeId,
@@ -48,8 +55,11 @@ public final class Keystore: Keychain {
             policy: policy,
             itemClass: kSecClassKey,
             accessGroup: accessGroup,
+            promptMessage: promptMessage,
+            reuseContext: reuseContext,
             performer: performer,
-            contextFactory: contextFactory
+            contextFactory: contextFactory,
+            clock: clock
         )
     }
 }

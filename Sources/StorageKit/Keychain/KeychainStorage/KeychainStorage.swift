@@ -8,14 +8,16 @@
 import Foundation
 import LocalAuthentication
 
-open class KeychainStorage: Keychain, Storage {
+open class KeychainStorage: Keychain, Storage, @unchecked Sendable {
 
     public init(
         storeId: String,
         protection: Keychain.Protection,
         accessControl: AccessControl = [],
         policy: LAPolicy? = nil,
-        accessGroup: String? = nil
+        accessGroup: String? = nil,
+        promptMessage: String? = nil,
+        reuseContext: ReuseContextMode = .never
     ) {
         super.init(
             storeId: storeId,
@@ -23,7 +25,9 @@ open class KeychainStorage: Keychain, Storage {
             accessControl: accessControl,
             policy: policy,
             itemClass: kSecClassGenericPassword,
-            accessGroup: accessGroup
+            accessGroup: accessGroup,
+            promptMessage: promptMessage,
+            reuseContext: reuseContext
         )
     }
 
@@ -33,8 +37,11 @@ open class KeychainStorage: Keychain, Storage {
         accessControl: AccessControl,
         policy: LAPolicy?,
         accessGroup: String?,
+        promptMessage: String? = nil,
+        reuseContext: ReuseContextMode = .never,
         performer: KeychainPerforming,
-        contextFactory: @escaping () -> LAContextProviding
+        contextFactory: @escaping @Sendable () -> LAContextProviding,
+        clock: any Clock<Duration> = ContinuousClock()
     ) {
         super.init(
             storeId: storeId,
@@ -43,8 +50,11 @@ open class KeychainStorage: Keychain, Storage {
             policy: policy,
             itemClass: kSecClassGenericPassword,
             accessGroup: accessGroup,
+            promptMessage: promptMessage,
+            reuseContext: reuseContext,
             performer: performer,
-            contextFactory: contextFactory
+            contextFactory: contextFactory,
+            clock: clock
         )
     }
 }

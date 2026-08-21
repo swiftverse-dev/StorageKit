@@ -7,7 +7,9 @@ import Foundation
 import LocalAuthentication
 @testable import StorageKit
 
-final class StubLAContext: LAContextProviding {
+// Test double, used single-threaded: configured before injection and only read
+// on the test thread. `@unchecked` is safe for this usage.
+final class StubLAContext: LAContextProviding, @unchecked Sendable {
     var localizedReason: String = ""
     var canEvaluateResult: Bool = true
     var canEvaluateError: NSError?

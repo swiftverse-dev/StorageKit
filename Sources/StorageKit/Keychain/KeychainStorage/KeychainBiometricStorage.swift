@@ -8,7 +8,7 @@
 import Foundation
 import LocalAuthentication
 
-public final class KeychainBiometricStorage: KeychainStorage {
+public final class KeychainBiometricStorage: KeychainStorage, @unchecked Sendable {
     public enum AccessControl {
         case passcode
         case passcodeOrAnyBiometry
@@ -41,15 +41,9 @@ public final class KeychainBiometricStorage: KeychainStorage {
             protection: .whenThisDevicePasscodeSet,
             accessControl: accessControl.flags,
             policy: policy,
-            accessGroup: accessGroup
+            accessGroup: accessGroup,
+            promptMessage: promptMessage,
+            reuseContext: reuseContextMode
         )
-        self.promptMessage = promptMessage
-        self.reuseContext = reuseContextMode
-    }
-
-    @discardableResult
-    public func reusingContext(_ mode: Keychain.ReuseContextMode) -> Self {
-        reuseContext = mode
-        return self
     }
 }

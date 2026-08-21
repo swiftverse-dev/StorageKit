@@ -98,9 +98,10 @@ private extension UserDefaultsStorageTests{
     var someTag: String{ "someTag" }
 
     func makeSUT(storeId: String? = nil) throws -> Storage{
-        let sut = UserDefaults(suiteName: storeId ?? "test.storeadsdasdas")!
+        let suiteName = storeId ?? "test.storeadsdasdas"
+        let sut = UserDefaults(suiteName: suiteName)!
         addTeardownBlock {
-            sut.clear()
+            UserDefaults().removePersistentDomain(forName: suiteName)
         }
         return sut
     }
