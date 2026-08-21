@@ -148,3 +148,4 @@ BuildTools/.swiftpm
 
 docs/*
 !docs/agents/
+!docs/adr/
