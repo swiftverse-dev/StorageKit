@@ -17,7 +17,6 @@ extension Keystore.Query {
     static func createQueryForKeyGeneration(
         key: Keystore.KeyTypeGeneration,
         tag: String?,
-        itemClass: CFString,
         context: any LAContextProviding,
         protection: Keychain.Protection,
         accessControlFlags: SecAccessControlCreateFlags,
@@ -26,7 +25,8 @@ extension Keystore.Query {
     ) throws -> CFDictionary{
         var query: [String: Any] = [
             kSecAttrKeyType as String               : key.type,
-            kSecAttrKeySizeInBits as String         : key.bitSize
+            kSecAttrKeySizeInBits as String         : key.bitSize,
+            kSecUseAuthenticationContext as String  : context
         ]
         #if os(macOS)
         query[kSecUseDataProtectionKeychain as String] = true
@@ -36,16 +36,21 @@ extension Keystore.Query {
             query[kSecAttrAccessGroup as String] = accessGroup
         }
 
-        addPermanentAttributesIfApplicable(to: &query, tag: tag)
-
-        try addAccessControl(
-            to: &query,
+        // Apple reads the access control of a generated key from the private
+        // key attributes, not from the top level of the query.
+        var privateKeyAttrs: [String: Any] = [:]
+        privateKeyAttrs[kSecAttrAccessControl as String] = try Keychain.Query.makeAccessControl(
             context: context,
             protection: protection,
             accessControlFlags: accessControlFlags,
             policy: policy
         )
-        
+        if let tag {
+            privateKeyAttrs[kSecAttrIsPermanent as String] = true
+            privateKeyAttrs[kSecAttrApplicationTag as String] = tag
+        }
+        query[kSecPrivateKeyAttrs as String] = privateKeyAttrs
+
         return query as CFDictionary
     }
     
@@ -185,13 +190,6 @@ private extension Keystore.Query {
         policy: LAPolicy?
     ) throws{
         try Keychain.Query.addAccessControl(to: &query, context: context, protection: protection, accessControlFlags: accessControlFlags, policy: policy)
-    }
-    static func addPermanentAttributesIfApplicable(to query: inout [String: Any], tag: String?){
-        guard let tag else { return }
-        query[kSecPrivateKeyAttrs as String] = [
-            kSecAttrIsPermanent as String       : true,
-            kSecAttrApplicationTag as String    : tag
-        ]
     }
 }
 

@@ -130,7 +130,7 @@ extension Keychain.Query {
 
 
 extension Keychain.Query{
- 
+
     static func addAccessControl(
         to query: inout [String: Any],
         context: any LAContextProviding,
@@ -138,19 +138,29 @@ extension Keychain.Query{
         accessControlFlags: SecAccessControlCreateFlags,
         policy: LAPolicy?
     ) throws{
-        let access = SecAccessControlCreateWithFlags(
-            nil,
-            protection.type,
-            accessControlFlags,
-            nil
+        query[kSecAttrAccessControl as String] = try makeAccessControl(
+            context: context,
+            protection: protection,
+            accessControlFlags: accessControlFlags,
+            policy: policy
         )
-        
+        query[kSecUseAuthenticationContext as String] = context
+    }
+
+    static func makeAccessControl(
+        context: any LAContextProviding,
+        protection: Keychain.Protection,
+        accessControlFlags: SecAccessControlCreateFlags,
+        policy: LAPolicy?
+    ) throws -> SecAccessControl? {
+        try ensureCanEvaluate(policy, context: context)
+        return SecAccessControlCreateWithFlags(nil, protection.type, accessControlFlags, nil)
+    }
+
+    static func ensureCanEvaluate(_ policy: LAPolicy?, context: any LAContextProviding) throws {
         guard context.canEvaluatePolicy(policy) else {
             throw policy == .deviceOwnerAuthentication ? Keychain.Error.passcodeDisabled : .biometryDisabled
         }
-        
-        query[kSecUseAuthenticationContext as String] = context
-        query[kSecAttrAccessControl as String] = access
     }
 }
 

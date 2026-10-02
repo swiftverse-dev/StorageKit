@@ -28,7 +28,6 @@ public extension Keystore {
         let query = try Query.createQueryForKeyGeneration(
             key: key,
             tag: nil,
-            itemClass: kSecClassKey,
             context: LAContext(),
             protection: .whenUnlocked,
             accessControlFlags: [],
@@ -36,7 +35,7 @@ public extension Keystore {
             accessGroup: nil
         )
 
-        return try Operation.generatePrivateKey(using: query)
+        return try Operation.generatePrivateKey(using: query, with: SecItemPerformer())
     }
 
     static func keyFrom(_ keyType: KeyTypeParseMode) throws -> SecKey {

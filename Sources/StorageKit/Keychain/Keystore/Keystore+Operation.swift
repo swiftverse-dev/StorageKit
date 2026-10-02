@@ -10,10 +10,10 @@ extension Keystore {
 }
 
 extension Keystore.Operation {
-    static func generatePrivateKey(using query: CFDictionary) throws -> SecKey {
+    static func generatePrivateKey(using query: CFDictionary, with performer: any KeychainPerforming) throws -> SecKey {
         var error: Unmanaged<CFError>?
         defer { error?.release() }
-        let key = SecKeyCreateRandomKey(query, &error)
+        let key = performer.createRandomKey(query, error: &error)
         let keystoreError = (error?.takeUnretainedValue())
             .map{
                 let status = CFErrorGetCode($0)

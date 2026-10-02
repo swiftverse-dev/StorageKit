@@ -30,12 +30,12 @@ public extension Keystore.Vault where B == Keystore.Standard {
 
     func generate(key: Keystore.KeyTypeGeneration, forTag tag: String? = nil) throws -> SecKey {
         let mappedTag = tag.map(map(tag:))
-        if let mappedTag { deleteKey(mappedTag: mappedTag) }
 
+        // Build the query first: it runs the policy check, and a failed check
+        // must not delete the key that is already stored.
         let query = try Keystore.Query.createQueryForKeyGeneration(
             key: key,
             tag: mappedTag,
-            itemClass: itemClass,
             context: context,
             protection: protection,
             accessControlFlags: accessControl,
@@ -43,7 +43,8 @@ public extension Keystore.Vault where B == Keystore.Standard {
             accessGroup: accessGroup
         )
 
-        return try Keystore.Operation.generatePrivateKey(using: query)
+        if let mappedTag { deleteKey(mappedTag: mappedTag) }
+        return try Keystore.Operation.generatePrivateKey(using: query, with: performer)
     }
 
     func keyFrom(_ keyType: Keystore.KeyTypeParseMode, storingWithTag tag: String? = nil) throws -> SecKey {

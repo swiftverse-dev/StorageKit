@@ -10,6 +10,7 @@ internal protocol KeychainPerforming {
     func copyMatching(_ query: CFDictionary, result: UnsafeMutablePointer<CFTypeRef?>?) -> OSStatus
     func update(_ query: CFDictionary, attributes: CFDictionary) -> OSStatus
     func delete(_ query: CFDictionary) -> OSStatus
+    func createRandomKey(_ attributes: CFDictionary, error: UnsafeMutablePointer<Unmanaged<CFError>?>?) -> SecKey?
 }
 
 internal struct SecItemPerformer: KeychainPerforming {
@@ -27,5 +28,9 @@ internal struct SecItemPerformer: KeychainPerforming {
 
     func delete(_ query: CFDictionary) -> OSStatus {
         SecItemDelete(query)
+    }
+
+    func createRandomKey(_ attributes: CFDictionary, error: UnsafeMutablePointer<Unmanaged<CFError>?>?) -> SecKey? {
+        SecKeyCreateRandomKey(attributes, error)
     }
 }
