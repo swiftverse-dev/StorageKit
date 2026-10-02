@@ -34,7 +34,10 @@ extension Keystore.Operation {
 
         try Keystore.Error(from: status).throwIfExist()
 
-        return (item as! SecKey)
+        guard let item, CFGetTypeID(item) == SecKeyGetTypeID() else {
+            throw Keystore.Error.keychainError(.itemNotFound)
+        }
+        return item as! SecKey
     }
 
     static func createKeyFromData(_ data: Data, using query: CFDictionary) throws -> SecKey {

@@ -23,6 +23,9 @@ final class InMemoryKeychain: KeychainPerforming {
     var deleteStatusOverride: OSStatus?
     var updateStatusOverride: OSStatus?
 
+    /// When set, `copyMatching` succeeds and returns this value as the result.
+    var copyResultOverride: CFTypeRef?
+
     struct Key: Hashable {
         let itemClass: String
         let primaryKey: String
@@ -41,6 +44,10 @@ final class InMemoryKeychain: KeychainPerforming {
 
     func copyMatching(_ query: CFDictionary, result: UnsafeMutablePointer<CFTypeRef?>?) -> OSStatus {
         if let override = copyStatusOverride { return override }
+        if let copyResultOverride {
+            result?.pointee = copyResultOverride
+            return errSecSuccess
+        }
         let dict = query as! [String: Any]
         let matchLimit = (dict[kSecMatchLimit as String] as? String) ?? (kSecMatchLimitOne as String)
         let returnAttributes = (dict[kSecReturnAttributes as String] as? Bool) ?? false

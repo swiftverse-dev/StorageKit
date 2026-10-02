@@ -43,6 +43,49 @@ final class KeystoreInstanceTests: LeakTrackingTestCase {
 
         #expect(fake.items.isEmpty)
     }
+
+    @Test func `loadKey finds an EC key by tag`() throws {
+        let sut = makeSUT(performer: InMemoryKeychain())
+        let generated = try sut.generate(key: .ecPrimeRandom(bitSize: 256), forTag: "ec")
+
+        let loaded = try sut.loadKey(for: "ec")
+
+        #expect(loaded.data == generated.data)
+    }
+
+    @Test func `deleteKey removes an EC key`() throws {
+        let fake = InMemoryKeychain()
+        let sut = makeSUT(performer: fake)
+        _ = try sut.generate(key: .ecPrimeRandom(bitSize: 256), forTag: "ec")
+
+        #expect(sut.deleteKey(for: "ec"))
+        #expect(fake.items.isEmpty)
+    }
+
+    @Test func `loadKey throws itemNotFound when the result is not a key`() {
+        let fake = InMemoryKeychain()
+        fake.copyResultOverride = "not a key" as CFString
+        let sut = makeSUT(performer: fake)
+
+        #expect(throws: Keystore.Error.keychainError(.itemNotFound)) {
+            try sut.loadKey(for: "any")
+        }
+    }
+
+    @Test func `loadKey still checks the biometric policy`() {
+        let context = StubLAContext()
+        context.canEvaluateResult = false
+        let sut = KeychainSUTFactory.makeKeystore(
+            accessControl: .currentBiometry,
+            performer: InMemoryKeychain(),
+            contextFactory: { context }
+        )
+        trackForMemoryLeaks(sut)
+
+        #expect(throws: Keychain.Error.biometryDisabled) {
+            try sut.loadKey(for: "any")
+        }
+    }
 }
 
 private extension KeystoreInstanceTests {

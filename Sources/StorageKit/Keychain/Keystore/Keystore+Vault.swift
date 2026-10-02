@@ -55,7 +55,6 @@ extension Keystore.Vault {
     @discardableResult
     func deleteKey(mappedTag: String) -> Bool {
         let query = Keystore.Query.createQueryForKeyDeletion(
-            .rsa,
             tag: mappedTag,
             itemClass: itemClass,
             accessGroup: accessGroup
@@ -69,12 +68,9 @@ extension Keystore.Vault {
         promptMessage: String?
     ) throws -> SecKey {
         let query = try Keystore.Query.createQueryForKeyRetrieve(
-            .rsa,
             tag: map(tag: tag),
             itemClass: itemClass,
             context: context,
-            protection: protection,
-            accessControlFlags: accessControl,
             policy: policy,
             accessGroup: accessGroup,
             promptMessage: promptMessage

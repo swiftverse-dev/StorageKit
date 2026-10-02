@@ -108,26 +108,24 @@ extension Keystore.Query {
     }
     
     static func createQueryForKeyRetrieve(
-        _ key: Keystore.KeyType,
         tag: String,
-        matchLimit: CFString = kSecMatchLimitOne,
         itemClass: CFString,
         context: any LAContextProviding,
-        protection: Keychain.Protection,
-        accessControlFlags: SecAccessControlCreateFlags,
         policy: LAPolicy?,
         accessGroup: String? = nil,
-        returnAttributes: Bool = false,
         promptMessage: String? = nil
     ) throws -> CFDictionary{
-        var query = [
+        try Keychain.Query.ensureCanEvaluate(policy, context: context)
+
+        // No kSecAttrKeyType: the tag identifies the key, whatever its type.
+        var query: [String: Any] = [
             kSecClass as String                     : itemClass,
+            kSecAttrKeyClass as String              : kSecAttrKeyClassPrivate,
+            kSecAttrApplicationTag as String        : tag,
             kSecReturnRef as String                 : true,
-            kSecMatchLimit as String                : matchLimit,
-            kSecReturnAttributes as String          : returnAttributes,
-            kSecAttrKeyType as String               : key.type,
-            kSecAttrApplicationTag as String        : tag
-        ] as [String: Any]
+            kSecMatchLimit as String                : kSecMatchLimitOne,
+            kSecUseAuthenticationContext as String  : context
+        ]
         #if os(macOS)
         query[kSecUseDataProtectionKeychain as String] = true
         #endif
@@ -146,19 +144,10 @@ extension Keystore.Query {
             query[kSecAttrAccessGroup as String] = accessGroup
         }
 
-        try addAccessControl(
-            to: &query,
-            context: context,
-            protection: protection,
-            accessControlFlags: accessControlFlags,
-            policy: policy
-        )
-        
         return query as CFDictionary
     }
 
     static func createQueryForKeyDeletion(
-        _ key: Keystore.KeyType,
         tag: String,
         itemClass: CFString,
         accessGroup: String? = nil
@@ -166,7 +155,6 @@ extension Keystore.Query {
         var query: [String: Any] = [
             kSecClass as String                     : itemClass,
             kSecAttrApplicationTag as String        : tag,
-            kSecAttrKeyType as String               : key.type,
             kSecAttrKeyClass as String              : kSecAttrKeyClassPrivate
         ]
         #if os(macOS)
