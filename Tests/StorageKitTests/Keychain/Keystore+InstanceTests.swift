@@ -46,7 +46,7 @@ final class KeystoreInstanceTests: LeakTrackingTestCase {
 }
 
 private extension KeystoreInstanceTests {
-    func makeSUT(storeId: String = "test.keystore", performer: any KeychainPerforming) -> Keystore {
+    func makeSUT(storeId: String = "test.keystore", performer: any KeychainPerforming) -> Keystore.StandardVault {
         let sut = KeychainSUTFactory.makeKeystore(storeId: storeId, performer: performer)
         trackForMemoryLeaks(sut)
         return sut

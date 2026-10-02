@@ -39,20 +39,18 @@ enum KeychainSUTFactory {
     static func makeKeystore(
         storeId: String = "test.keystore",
         protection: Keychain.Protection = .whenUnlocked,
-        accessControl: Keychain.AccessControl = [],
-        policy: LAPolicy? = nil,
+        accessControl: Keystore.AccessControl = .none,
         performer: any KeychainPerforming,
         accessGroup: String? = nil,
         promptMessage: String? = nil,
         reuseContext: Keychain.ReuseContextMode = .never,
         clock: any Clock<Duration> = TestClock(),
         contextFactory: @escaping @Sendable () -> any LAContextProviding = { StubLAContext() }
-    ) -> Keystore {
-        Keystore(
+    ) -> Keystore.StandardVault {
+        Keystore.StandardVault(
             storeId: storeId,
             protection: protection,
             accessControl: accessControl,
-            policy: policy,
             accessGroup: accessGroup,
             promptMessage: promptMessage,
             reuseContext: reuseContext,

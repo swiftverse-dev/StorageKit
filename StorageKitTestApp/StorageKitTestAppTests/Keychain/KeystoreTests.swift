@@ -59,7 +59,7 @@ final class KeystoreIntegrationTests {
 }
 
 private extension KeystoreIntegrationTests {
-    func makeSUT() -> Keystore {
-        Keystore(storeId: "test.keystore.integration.\(runId)", protection: .whenUnlocked)
+    func makeSUT() -> Keystore.StandardVault {
+        Keystore.StandardVault(storeId: "test.keystore.integration.\(runId)", protection: .whenUnlocked)
     }
 }
