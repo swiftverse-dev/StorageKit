@@ -20,7 +20,7 @@ open class Keychain: @unchecked Sendable {
     public let itemClass: CFString
 
     // Internal seams. Defaults wire real Security/LocalAuthentication.
-    internal let performer: KeychainPerforming
+    internal let performer: any KeychainPerforming
 
     // The only mutable state in the hierarchy, fully encapsulated and lock-guarded.
     // `@unchecked Sendable` is required only because `performer` (an existential)
@@ -28,7 +28,7 @@ open class Keychain: @unchecked Sendable {
     // state is immutable `let` and the mutable context cache lives behind
     // `ContextStore`'s lock.
     private let contextStore: ContextStore
-    internal var context: LAContextProviding { contextStore.context() }
+    internal var context: any LAContextProviding { contextStore.context() }
 
     public init(
         storeId: String,
@@ -65,8 +65,8 @@ open class Keychain: @unchecked Sendable {
         accessGroup: String?,
         promptMessage: String? = nil,
         reuseContext: ReuseContextMode = .never,
-        performer: KeychainPerforming,
-        contextFactory: @escaping @Sendable () -> LAContextProviding,
+        performer: any KeychainPerforming,
+        contextFactory: @escaping @Sendable () -> any LAContextProviding,
         clock: any Clock<Duration> = ContinuousClock()
     ) {
         self.storeId = storeId

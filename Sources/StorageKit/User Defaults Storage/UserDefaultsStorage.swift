@@ -68,7 +68,7 @@ public extension UserDefaults {
 }
 
 private extension Optional {
-    func or(throw error: Error) throws -> Wrapped {
+    func or(throw error: any Error) throws -> Wrapped {
         guard let wrapped = self else {
             throw error
         }

@@ -3,55 +3,59 @@
 //  StorageKitTests
 //
 
-import XCTest
+import Foundation
+import Testing
 @testable import StorageKit
 
-final class KeychainReuseContextTests: XCTestCase {
+final class KeychainReuseContextTests: LeakTrackingTestCase {
 
-    func test_never_producesFreshContextEachAccess() {
+    @Test func `never mode produces a fresh context on every access`() {
         let count = Counter()
         let sut = KeychainSUTFactory.makeKeychainStorage(
             performer: InMemoryKeychain(),
             reuseContext: .never,
             contextFactory: { count.increment(); return StubLAContext() }
         )
+        trackForMemoryLeaks(sut)
 
         _ = sut.context
         _ = sut.context
         _ = sut.context
 
-        XCTAssertEqual(count.value, 3)
+        #expect(count.value == 3)
     }
 
-    func test_always_reusesTheSameContext() {
+    @Test func `always mode reuses the same context`() {
         let count = Counter()
         let sut = KeychainSUTFactory.makeKeychainStorage(
             performer: InMemoryKeychain(),
             reuseContext: .always,
             contextFactory: { count.increment(); return StubLAContext() }
         )
+        trackForMemoryLeaks(sut)
 
         let first = sut.context
         let second = sut.context
         let third = sut.context
 
-        XCTAssertEqual(count.value, 1)
-        XCTAssertTrue(first === second)
-        XCTAssertTrue(second === third)
+        #expect(count.value == 1)
+        #expect(first === second)
+        #expect(second === third)
     }
 
-    func test_forInterval_reusesContextDuringInterval() {
+    @Test func `forInterval mode reuses the context during the interval`() {
         let count = Counter()
         let sut = KeychainSUTFactory.makeKeychainStorage(
             performer: InMemoryKeychain(),
             reuseContext: .forInterval(60),
             contextFactory: { count.increment(); return StubLAContext() }
         )
+        trackForMemoryLeaks(sut)
 
         let first = sut.context
         let second = sut.context
 
-        XCTAssertEqual(count.value, 1)
-        XCTAssertTrue(first === second)
+        #expect(count.value == 1)
+        #expect(first === second)
     }
 }

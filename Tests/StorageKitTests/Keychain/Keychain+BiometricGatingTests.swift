@@ -3,13 +3,14 @@
 //  StorageKitTests
 //
 
-import XCTest
+import Foundation
+import Testing
 import LocalAuthentication
 @testable import StorageKit
 
-final class KeychainBiometricGatingTests: XCTestCase {
+final class KeychainBiometricGatingTests: LeakTrackingTestCase {
 
-    func test_save_throwsPasscodeDisabled_whenPolicyIsDeviceOwnerAuthentication_andContextCannotEvaluate() {
+    @Test func `save throws passcodeDisabled when the device owner policy cannot be evaluated`() {
         let fake = InMemoryKeychain()
         let stub = StubLAContext()
         stub.canEvaluateResult = false
@@ -21,14 +22,15 @@ final class KeychainBiometricGatingTests: XCTestCase {
             performer: fake,
             contextFactory: { stub }
         )
+        trackForMemoryLeaks(sut)
 
-        XCTAssertThrowsError(try sut.save(Data("payload".utf8), withTag: "tag")) { error in
-            XCTAssertEqual(error as? Keychain.Error, .passcodeDisabled)
+        #expect(throws: Keychain.Error.passcodeDisabled) {
+            try sut.save(Data("payload".utf8), withTag: "tag")
         }
-        XCTAssertEqual(fake.items.count, 0)
+        #expect(fake.items.isEmpty)
     }
 
-    func test_save_throwsBiometryDisabled_whenPolicyIsDeviceOwnerAuthenticationWithBiometrics_andContextCannotEvaluate() {
+    @Test func `save throws biometryDisabled when the biometrics policy cannot be evaluated`() {
         let fake = InMemoryKeychain()
         let stub = StubLAContext()
         stub.canEvaluateResult = false
@@ -40,13 +42,14 @@ final class KeychainBiometricGatingTests: XCTestCase {
             performer: fake,
             contextFactory: { stub }
         )
+        trackForMemoryLeaks(sut)
 
-        XCTAssertThrowsError(try sut.save(Data("payload".utf8), withTag: "tag")) { error in
-            XCTAssertEqual(error as? Keychain.Error, .biometryDisabled)
+        #expect(throws: Keychain.Error.biometryDisabled) {
+            try sut.save(Data("payload".utf8), withTag: "tag")
         }
     }
 
-    func test_save_succeeds_whenStubReportsCanEvaluate() throws {
+    @Test func `save succeeds when the context reports it can evaluate the policy`() throws {
         let fake = InMemoryKeychain()
         let stub = StubLAContext()
         stub.canEvaluateResult = true
@@ -58,8 +61,10 @@ final class KeychainBiometricGatingTests: XCTestCase {
             performer: fake,
             contextFactory: { stub }
         )
+        trackForMemoryLeaks(sut)
 
-        XCTAssertNoThrow(try sut.save(Data("payload".utf8), withTag: "tag"))
-        XCTAssertEqual(fake.items.count, 1)
+        try sut.save(Data("payload".utf8), withTag: "tag")
+
+        #expect(fake.items.count == 1)
     }
 }

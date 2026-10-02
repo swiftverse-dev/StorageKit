@@ -18,7 +18,7 @@ extension Keystore.Query {
         key: Keystore.KeyTypeGeneration,
         tag: String?,
         itemClass: CFString,
-        context: LAContextProviding,
+        context: any LAContextProviding,
         protection: Keychain.Protection,
         accessControlFlags: SecAccessControlCreateFlags,
         policy: LAPolicy?,
@@ -53,7 +53,7 @@ extension Keystore.Query {
         tag: String,
         key: Keystore.KeyTypeParseMode,
         itemClass: CFString,
-        context: LAContextProviding,
+        context: any LAContextProviding,
         protection: Keychain.Protection,
         accessControlFlags: SecAccessControlCreateFlags,
         policy: LAPolicy?,
@@ -107,7 +107,7 @@ extension Keystore.Query {
         tag: String,
         matchLimit: CFString = kSecMatchLimitOne,
         itemClass: CFString,
-        context: LAContextProviding,
+        context: any LAContextProviding,
         protection: Keychain.Protection,
         accessControlFlags: SecAccessControlCreateFlags,
         policy: LAPolicy?,
@@ -179,7 +179,7 @@ private extension Keystore.Query {
 
     static func addAccessControl(
         to query: inout [String: Any],
-        context: LAContextProviding,
+        context: any LAContextProviding,
         protection: Keychain.Protection,
         accessControlFlags: SecAccessControlCreateFlags,
         policy: LAPolicy?

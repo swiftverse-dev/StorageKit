@@ -3,31 +3,34 @@
 //  StorageKitTests
 //
 
-import XCTest
+import Foundation
+import Testing
 @testable import StorageKit
 
-final class KeychainAccessGroupTests: XCTestCase {
+final class KeychainAccessGroupTests: LeakTrackingTestCase {
 
-    func test_save_setsAccessGroupOnQuery_whenAccessGroupProvided() throws {
+    @Test func `save sets the access group on the query when one is provided`() throws {
         let fake = InMemoryKeychain()
         let sut = KeychainSUTFactory.makeKeychainStorage(
             performer: fake,
             accessGroup: "group.test.SharedKeychain"
         )
+        trackForMemoryLeaks(sut)
 
         try sut.save(Data("payload".utf8), withTag: "tag1")
 
-        let stored = fake.items.values.first!
-        XCTAssertEqual(stored[kSecAttrAccessGroup as String] as? String, "group.test.SharedKeychain")
+        let stored = try #require(fake.items.values.first)
+        #expect(stored[kSecAttrAccessGroup as String] as? String == "group.test.SharedKeychain")
     }
 
-    func test_save_omitsAccessGroup_whenAccessGroupNil() throws {
+    @Test func `save omits the access group when none is provided`() throws {
         let fake = InMemoryKeychain()
         let sut = KeychainSUTFactory.makeKeychainStorage(performer: fake, accessGroup: nil)
+        trackForMemoryLeaks(sut)
 
         try sut.save(Data("payload".utf8), withTag: "tag1")
 
-        let stored = fake.items.values.first!
-        XCTAssertNil(stored[kSecAttrAccessGroup as String])
+        let stored = try #require(fake.items.values.first)
+        #expect(stored[kSecAttrAccessGroup as String] == nil)
     }
 }

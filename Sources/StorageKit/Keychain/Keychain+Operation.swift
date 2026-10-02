@@ -11,7 +11,7 @@ extension Keychain {
 
 extension Keychain.Operation{
 
-    static func addItem(using query: CFDictionary, with performer: KeychainPerforming) throws{
+    static func addItem(using query: CFDictionary, with performer: any KeychainPerforming) throws{
         let status = performer.add(query)
 
         if let err = Keychain.Error(from: status){
@@ -19,7 +19,7 @@ extension Keychain.Operation{
         }
     }
 
-    static func loadItem(using query: CFDictionary, with performer: KeychainPerforming) throws -> Data{
+    static func loadItem(using query: CFDictionary, with performer: any KeychainPerforming) throws -> Data{
         var ref: CFTypeRef?
         let status = performer.copyMatching(query, result: &ref)
 
@@ -34,7 +34,7 @@ extension Keychain.Operation{
         return data
     }
 
-    static func loadAttributedItems(using query: CFDictionary, with performer: KeychainPerforming) throws -> [[String: Any]] {
+    static func loadAttributedItems(using query: CFDictionary, with performer: any KeychainPerforming) throws -> [[String: Any]] {
         var ref: CFTypeRef?
         let status = performer.copyMatching(query, result: &ref)
 
@@ -49,7 +49,7 @@ extension Keychain.Operation{
         return items
     }
 
-    static func deleteItem(using query: CFDictionary, with performer: KeychainPerforming) -> Bool{
+    static func deleteItem(using query: CFDictionary, with performer: any KeychainPerforming) -> Bool{
         let status = performer.delete(query)
 
         if Keychain.Error(from: status) != nil{

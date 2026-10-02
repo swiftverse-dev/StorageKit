@@ -3,43 +3,51 @@
 //  StorageKitTests
 //
 
-import XCTest
+import Foundation
+import Testing
 @testable import StorageKit
 
-final class KeychainStorageTagMappingTests: XCTestCase {
+final class KeychainStorageTagMappingTests: LeakTrackingTestCase {
 
-    func test_save_storesItemUnderService() throws {
+    @Test func `save stores the item under the storeId service`() throws {
         let fake = InMemoryKeychain()
-        let sut = KeychainSUTFactory.makeKeychainStorage(storeId: "store.A", performer: fake)
+        let sut = makeSUT(performer: fake)
 
         try sut.save(Data("payload".utf8), withTag: "tag1")
 
-        XCTAssertEqual(fake.items.count, 1)
-        let stored = fake.items.values.first!
-        XCTAssertEqual(stored[kSecAttrAccount as String] as? String, "tag1")
-        XCTAssertEqual(stored[kSecAttrService as String] as? String, "store.A")
-        XCTAssertEqual(stored[kSecValueData as String] as? Data, Data("payload".utf8))
-        XCTAssertEqual(stored[kSecClass as String] as? String, kSecClassGenericPassword as String)
+        #expect(fake.items.count == 1)
+        let stored = try #require(fake.items.values.first)
+        #expect(stored[kSecAttrAccount as String] as? String == "tag1")
+        #expect(stored[kSecAttrService as String] as? String == "store.A")
+        #expect(stored[kSecValueData as String] as? Data == Data("payload".utf8))
+        #expect(stored[kSecClass as String] as? String == kSecClassGenericPassword as String)
     }
 
-    func test_loadData_findsItemUnderPrefixedAccount() throws {
-        let fake = InMemoryKeychain()
-        let sut = KeychainSUTFactory.makeKeychainStorage(storeId: "store.A", performer: fake)
+    @Test func `loadData finds the item stored under the prefixed account`() throws {
+        let sut = makeSUT(performer: InMemoryKeychain())
 
         try sut.save(Data("payload".utf8), withTag: "tag1")
         let loaded = try sut.loadData(withTag: "tag1")
 
-        XCTAssertEqual(loaded, Data("payload".utf8))
+        #expect(loaded == Data("payload".utf8))
     }
 
-    func test_save_overridesPreviouslyStoredItem() throws {
+    @Test func `save overrides a previously stored item`() throws {
         let fake = InMemoryKeychain()
-        let sut = KeychainSUTFactory.makeKeychainStorage(storeId: "store.A", performer: fake)
+        let sut = makeSUT(performer: fake)
 
         try sut.save(Data("first".utf8), withTag: "tag1")
         try sut.save(Data("second".utf8), withTag: "tag1")
 
-        XCTAssertEqual(fake.items.count, 1)
-        XCTAssertEqual(try sut.loadData(withTag: "tag1"), Data("second".utf8))
+        #expect(fake.items.count == 1)
+        #expect(try sut.loadData(withTag: "tag1") == Data("second".utf8))
+    }
+}
+
+private extension KeychainStorageTagMappingTests {
+    func makeSUT(performer: any KeychainPerforming) -> KeychainStorage {
+        let sut = KeychainSUTFactory.makeKeychainStorage(storeId: "store.A", performer: performer)
+        trackForMemoryLeaks(sut)
+        return sut
     }
 }
