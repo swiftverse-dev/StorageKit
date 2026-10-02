@@ -12,6 +12,9 @@ public extension Keystore {
         case badKeySizeError
         case keyGenerationError
         case parsingError
+        case encryptionError
+        case decryptionError
+        case signingError
         case keychainError(Keychain.Error)
         
         init?(from status: OSStatus){
@@ -21,6 +24,19 @@ public extension Keystore {
                 guard let err = Keychain.Error(from: status) else { return nil }
                 self = .keychainError(err)
             }
+        }
+    }
+}
+
+extension Keystore.Error {
+    /// Maps the code of a failed SecKey encrypt, decrypt or sign call. Only a
+    /// user cancel and a failed authentication keep their keychain meaning.
+    /// Every other code becomes `fallback`.
+    init(cryptoFailureCode code: Int, fallback: Keystore.Error) {
+        switch Keychain.Error(from: OSStatus(truncatingIfNeeded: code)) {
+        case .userCancelOperation?: self = .keychainError(.userCancelOperation)
+        case .authenticationFailure?: self = .keychainError(.authenticationFailure)
+        default: self = fallback
         }
     }
 }

@@ -23,6 +23,18 @@ extension Keystore.Operation {
         return try key.orThrow(keystoreError)
     }
 
+    static func performCrypto(
+        failure: Keystore.Error,
+        _ body: (UnsafeMutablePointer<Unmanaged<CFError>?>) -> CFData?
+    ) throws -> Data {
+        var error: Unmanaged<CFError>?
+        guard let result = body(&error) else {
+            let code = error.map { CFErrorGetCode($0.takeRetainedValue()) }
+            throw code.map { Keystore.Error(cryptoFailureCode: $0, fallback: failure) } ?? failure
+        }
+        return result as Data
+    }
+
     static func storeKey(using query: CFDictionary, with performer: any KeychainPerforming) throws {
         let status = performer.add(query)
         try Keystore.Error(from: status).throwIfExist()
