@@ -56,6 +56,43 @@ final class KeystoreIntegrationTests {
 
         #expect(sut.deleteKey(for: "knownTag"))
     }
+
+    // The protection lives in the key's access control. If generation put the
+    // access control where the keychain ignores it, the key would get the
+    // default protection (`ak`, when unlocked) instead.
+    @Test func `a generated key keeps the protection from its access control`() throws {
+        let sut = Keystore.StandardVault(
+            storeId: "test.keystore.integration.protection.\(runId)",
+            protection: .afterFirstUnlock
+        )
+        defer { sut.deleteKey(for: "knownTag") }
+        _ = try sut.generate(key: .ecPrimeRandom(bitSize: 256), forTag: "knownTag")
+
+        var query: [String: Any] = [
+            kSecClass as String: kSecClassKey,
+            kSecAttrApplicationTag as String: "\(sut.storeId).knownTag",
+            kSecAttrKeyClass as String: kSecAttrKeyClassPrivate,
+            kSecReturnAttributes as String: true,
+            kSecMatchLimit as String: kSecMatchLimitOne,
+        ]
+        #if os(macOS)
+        query[kSecUseDataProtectionKeychain as String] = true
+        #endif
+        var result: CFTypeRef?
+        let status = SecItemCopyMatching(query as CFDictionary, &result)
+
+        #expect(status == errSecSuccess)
+        let attributes = try #require(result as? [String: Any])
+        #expect(attributes[kSecAttrAccessible as String] as? String == kSecAttrAccessibleAfterFirstUnlock as String)
+    }
+
+    @Test func `an EC key loads and deletes by tag`() throws {
+        let sut = makeSUT()
+        let generated = try sut.generate(key: .ecPrimeRandom(bitSize: 256), forTag: "ecTag")
+
+        #expect(try sut.loadKey(for: "ecTag").data == generated.data)
+        #expect(sut.deleteKey(for: "ecTag"))
+    }
 }
 
 private extension KeystoreIntegrationTests {

@@ -8,7 +8,7 @@ import Foundation
 import LocalAuthentication
 
 public extension Keystore.Vault where B == Keystore.SecureEnclave {
-    /// `false` on the simulator and on Macs without a Secure Enclave.
+    /// `false` on devices and Macs without a Secure Enclave.
     static var isAvailable: Bool {
         CryptoKit.SecureEnclave.isAvailable
     }
