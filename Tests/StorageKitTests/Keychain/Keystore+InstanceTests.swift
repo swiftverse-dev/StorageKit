@@ -72,6 +72,25 @@ final class KeystoreInstanceTests: LeakTrackingTestCase {
         }
     }
 
+    @Test func `storing a private key after a failed policy check keeps the existing key`() throws {
+        let fake = InMemoryKeychain()
+        let context = StubLAContext()
+        let sut = KeychainSUTFactory.makeKeystore(
+            accessControl: .currentBiometry,
+            performer: fake,
+            contextFactory: { context }
+        )
+        trackForMemoryLeaks(sut)
+        _ = try sut.keyFrom(.private(.rsa, data: KeyFixtures.privatePkcs1Base64), storingWithTag: "knownTag")
+
+        context.canEvaluateResult = false
+
+        #expect(throws: Keychain.Error.biometryDisabled) {
+            try sut.keyFrom(.private(.rsa, data: KeyFixtures.privatePkcs1Base64), storingWithTag: "knownTag")
+        }
+        #expect(fake.items.count == 1)
+    }
+
     @Test func `loadKey still checks the biometric policy`() {
         let context = StubLAContext()
         context.canEvaluateResult = false

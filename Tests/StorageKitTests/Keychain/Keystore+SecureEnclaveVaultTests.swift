@@ -84,14 +84,22 @@ final class KeystoreSecureEnclaveVaultTests: LeakTrackingTestCase {
         #expect(fake.items.count == 1)
     }
 
+    // A new context on every read, as with `.never` reuse: the message must
+    // land on the context that reaches the query, not on another one.
     @Test func `loadKey puts the prompt message on the context it queries with`() throws {
-        let context = StubLAContext()
-        let sut = makeSUT(performer: InMemoryKeychain(), promptMessage: "Unlock your codes", context: context)
+        let fake = InMemoryKeychain()
+        let sut = KeychainSUTFactory.makeSecureEnclaveVault(
+            performer: fake,
+            promptMessage: "Unlock your codes",
+            contextFactory: { StubLAContext() }
+        )
+        trackForMemoryLeaks(sut)
         _ = try sut.generateKey(forTag: "tag1")
-        context.localizedReason = ""
 
         _ = try sut.loadKey(for: "tag1")
 
+        let query = try #require(fake.copyMatchingQueries.last)
+        let context = try #require(query[kSecUseAuthenticationContext as String] as? StubLAContext)
         #expect(context.localizedReason == "Unlock your codes")
     }
 }

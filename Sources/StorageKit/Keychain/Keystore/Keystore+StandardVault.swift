@@ -52,8 +52,9 @@ public extension Keystore.Vault where B == Keystore.Standard {
         guard let tag, keyType.isPrivateKey else { return key }
 
         let mappedTag = map(tag: tag)
-        deleteKey(mappedTag: mappedTag)
 
+        // Build the query first: it runs the policy check, and a failed check
+        // must not delete the key that is already stored.
         let query = try Keystore.Query.createQueryForKeySaving(
             tag: mappedTag,
             key: keyType,
@@ -64,6 +65,7 @@ public extension Keystore.Vault where B == Keystore.Standard {
             policy: policy,
             accessGroup: accessGroup
         )
+        deleteKey(mappedTag: mappedTag)
         try Keystore.Operation.storeKey(using: query, with: performer)
 
         return key

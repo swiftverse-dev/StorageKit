@@ -17,6 +17,9 @@ final class InMemoryKeychain: KeychainPerforming {
     /// Every attribute dictionary passed to `createRandomKey`, in call order.
     private(set) var generatedKeyAttributes: [[String: Any]] = []
 
+    /// Every query passed to `copyMatching`, in call order.
+    private(set) var copyMatchingQueries: [[String: Any]] = []
+
     /// Override-able status injectors for failure-mode tests.
     var addStatusOverride: OSStatus?
     var copyStatusOverride: OSStatus?
@@ -43,6 +46,7 @@ final class InMemoryKeychain: KeychainPerforming {
     }
 
     func copyMatching(_ query: CFDictionary, result: UnsafeMutablePointer<CFTypeRef?>?) -> OSStatus {
+        copyMatchingQueries.append(query as! [String: Any])
         if let override = copyStatusOverride { return override }
         if let copyResultOverride {
             result?.pointee = copyResultOverride
