@@ -36,3 +36,22 @@ extension Keystore.AccessControl {
         }
     }
 }
+
+public extension Keystore {
+    /// The protections the Secure Enclave accepts. They all keep the key on this device.
+    enum SecureEnclaveProtection: Sendable {
+        case whenThisDevicePasscodeSet
+        case whenThisDeviceUnlocked
+        case afterThisDeviceFirstUnlock
+    }
+}
+
+extension Keystore.SecureEnclaveProtection {
+    var protection: Keychain.Protection {
+        switch self {
+        case .whenThisDevicePasscodeSet: return .whenThisDevicePasscodeSet
+        case .whenThisDeviceUnlocked: return .whenThisDeviceUnlocked
+        case .afterThisDeviceFirstUnlock: return .afterThisDeviceFirstUnlock
+        }
+    }
+}

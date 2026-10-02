@@ -21,7 +21,8 @@ extension Keystore.Query {
         protection: Keychain.Protection,
         accessControlFlags: SecAccessControlCreateFlags,
         policy: LAPolicy?,
-        accessGroup: String? = nil
+        accessGroup: String? = nil,
+        tokenID: CFString? = nil
     ) throws -> CFDictionary{
         var query: [String: Any] = [
             kSecAttrKeyType as String               : key.type,
@@ -34,6 +35,10 @@ extension Keystore.Query {
 
         if let accessGroup {
             query[kSecAttrAccessGroup as String] = accessGroup
+        }
+
+        if let tokenID {
+            query[kSecAttrTokenID as String] = tokenID
         }
 
         // Apple reads the access control of a generated key from the private

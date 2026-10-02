@@ -31,4 +31,20 @@ struct KeystoreAccessControlTests {
         #expect(sut.accessControl == .biometryCurrentSet)
         #expect(sut.policy == .deviceOwnerAuthenticationWithBiometrics)
     }
+
+    @Test func `each Secure Enclave protection maps to the same keychain protection`() {
+        #expect(Keystore.SecureEnclaveProtection.whenThisDevicePasscodeSet.protection == .whenThisDevicePasscodeSet)
+        #expect(Keystore.SecureEnclaveProtection.whenThisDeviceUnlocked.protection == .whenThisDeviceUnlocked)
+        #expect(Keystore.SecureEnclaveProtection.afterThisDeviceFirstUnlock.protection == .afterThisDeviceFirstUnlock)
+    }
+
+    @Test func `the Secure Enclave vault always adds private key usage`() {
+        let none = KeychainSUTFactory.makeSecureEnclaveVault(performer: InMemoryKeychain())
+        let biometric = KeychainSUTFactory.makeSecureEnclaveVault(accessControl: .currentBiometry, performer: InMemoryKeychain())
+
+        #expect(none.accessControl == .privateKeyUsage)
+        #expect(none.policy == nil)
+        #expect(biometric.accessControl == [.biometryCurrentSet, .privateKeyUsage])
+        #expect(biometric.policy == .deviceOwnerAuthenticationWithBiometrics)
+    }
 }

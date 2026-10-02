@@ -96,7 +96,8 @@ extension Keystore.Vault where B == Keystore.Standard {
             reuseContext: reuseContext,
             performer: performer,
             contextFactory: contextFactory,
-            clock: clock
+            clock: clock,
+            secureEnclaveAvailability: { false }
         )
     }
 }

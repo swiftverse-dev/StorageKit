@@ -15,6 +15,7 @@ public extension Keystore {
         case encryptionError
         case decryptionError
         case signingError
+        case secureEnclaveUnavailable
         case keychainError(Keychain.Error)
         
         init?(from status: OSStatus){

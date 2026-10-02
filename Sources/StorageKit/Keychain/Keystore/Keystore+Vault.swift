@@ -10,6 +10,7 @@ public extension Keystore {
     /// Stores private keys by tag. `B` picks the API: `Keystore.Standard` for
     /// software keys, `Keystore.SecureEnclave` for Secure Enclave keys.
     final class Vault<B: Backing>: Keychain, @unchecked Sendable {
+        let secureEnclaveAvailability: @Sendable () -> Bool
 
         init(
             storeId: String,
@@ -21,8 +22,10 @@ public extension Keystore {
             reuseContext: Keychain.ReuseContextMode,
             performer: any KeychainPerforming,
             contextFactory: @escaping @Sendable () -> any LAContextProviding,
-            clock: any Clock<Duration>
+            clock: any Clock<Duration>,
+            secureEnclaveAvailability: @escaping @Sendable () -> Bool
         ) {
+            self.secureEnclaveAvailability = secureEnclaveAvailability
             super.init(
                 storeId: storeId,
                 protection: protection,

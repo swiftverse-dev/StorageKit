@@ -9,18 +9,24 @@ import Foundation
 import LocalAuthentication
 
 /// Namespace for key storage. Create a `Keystore.StandardVault` for software
-/// keys. The marker type picks which API the vault exposes.
+/// keys or a `Keystore.SecureEnclaveVault` for Secure Enclave keys. The marker
+/// type picks which API the vault exposes.
 public enum Keystore {
     public protocol Backing {}
     public enum Standard: Backing {}
+    public enum SecureEnclave: Backing {}
 
     public typealias StandardVault = Vault<Standard>
+    public typealias SecureEnclaveVault = Vault<SecureEnclave>
 
     public static let defaultStoreId = "default.keystore"
+    public static let defaultSecureEnclaveStoreId = "default.secureenclave.keystore"
+
     public static let standard = StandardVault(
         storeId: defaultStoreId,
         protection: .whenThisDeviceUnlocked
     )
+    public static let secureEnclave = SecureEnclaveVault(storeId: defaultSecureEnclaveStoreId)
 }
 
 public extension Keystore {
