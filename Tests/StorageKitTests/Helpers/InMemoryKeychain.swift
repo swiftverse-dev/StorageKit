@@ -14,11 +14,20 @@ final class InMemoryKeychain: KeychainPerforming {
 
     private(set) var items: [Key: [String: Any]] = [:]
 
+    /// Every attribute dictionary passed to `createRandomKey`, in call order.
+    private(set) var generatedKeyAttributes: [[String: Any]] = []
+
+    /// Every query passed to `copyMatching`, in call order.
+    private(set) var copyMatchingQueries: [[String: Any]] = []
+
     /// Override-able status injectors for failure-mode tests.
     var addStatusOverride: OSStatus?
     var copyStatusOverride: OSStatus?
     var deleteStatusOverride: OSStatus?
     var updateStatusOverride: OSStatus?
+
+    /// When set, `copyMatching` succeeds and returns this value as the result.
+    var copyResultOverride: CFTypeRef?
 
     struct Key: Hashable {
         let itemClass: String
@@ -37,7 +46,12 @@ final class InMemoryKeychain: KeychainPerforming {
     }
 
     func copyMatching(_ query: CFDictionary, result: UnsafeMutablePointer<CFTypeRef?>?) -> OSStatus {
+        copyMatchingQueries.append(query as! [String: Any])
         if let override = copyStatusOverride { return override }
+        if let copyResultOverride {
+            result?.pointee = copyResultOverride
+            return errSecSuccess
+        }
         let dict = query as! [String: Any]
         let matchLimit = (dict[kSecMatchLimit as String] as? String) ?? (kSecMatchLimitOne as String)
         let returnAttributes = (dict[kSecReturnAttributes as String] as? Bool) ?? false
@@ -86,6 +100,35 @@ final class InMemoryKeychain: KeychainPerforming {
         if matches.isEmpty { return errSecItemNotFound }
         for key in matches.keys { items.removeValue(forKey: key) }
         return errSecSuccess
+    }
+
+    /// Creates a real software key of the requested type and size, ignoring
+    /// `kSecAttrTokenID`. A permanent key is stored under its tag with
+    /// `kSecValueRef`, so `loadKey` can return it.
+    func createRandomKey(_ attributes: CFDictionary, error: UnsafeMutablePointer<Unmanaged<CFError>?>?) -> SecKey? {
+        let dict = attributes as! [String: Any]
+        generatedKeyAttributes.append(dict)
+
+        let softwareAttributes: [String: Any] = [
+            kSecAttrKeyType as String: dict[kSecAttrKeyType as String] as Any,
+            kSecAttrKeySizeInBits as String: dict[kSecAttrKeySizeInBits as String] as Any,
+        ]
+        guard let key = SecKeyCreateRandomKey(softwareAttributes as CFDictionary, error) else { return nil }
+
+        let privateAttributes = dict[kSecPrivateKeyAttrs as String] as? [String: Any] ?? [:]
+        if privateAttributes[kSecAttrIsPermanent as String] as? Bool == true,
+           let tag = privateAttributes[kSecAttrApplicationTag as String] as? String {
+            var stored: [String: Any] = [
+                kSecClass as String: kSecClassKey,
+                kSecAttrApplicationTag as String: tag,
+                kSecAttrKeyClass as String: kSecAttrKeyClassPrivate,
+                kSecAttrKeyType as String: dict[kSecAttrKeyType as String] as Any,
+                kSecValueRef as String: key,
+            ]
+            stored[kSecAttrAccessGroup as String] = dict[kSecAttrAccessGroup as String]
+            items[Key(itemClass: kSecClassKey as String, primaryKey: tag)] = stored
+        }
+        return key
     }
 
     // MARK: Matching

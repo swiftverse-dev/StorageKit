@@ -10,10 +10,10 @@ extension Keystore {
 }
 
 extension Keystore.Operation {
-    static func generatePrivateKey(using query: CFDictionary) throws -> SecKey {
+    static func generatePrivateKey(using query: CFDictionary, with performer: any KeychainPerforming) throws -> SecKey {
         var error: Unmanaged<CFError>?
         defer { error?.release() }
-        let key = SecKeyCreateRandomKey(query, &error)
+        let key = performer.createRandomKey(query, error: &error)
         let keystoreError = (error?.takeUnretainedValue())
             .map{
                 let status = CFErrorGetCode($0)
@@ -21,6 +21,22 @@ extension Keystore.Operation {
             } ?? Keystore.Error.keyGenerationError
 
         return try key.orThrow(keystoreError)
+    }
+
+    static func performCrypto(
+        failure: Keystore.Error,
+        _ body: (UnsafeMutablePointer<Unmanaged<CFError>?>) -> CFData?
+    ) throws -> Data {
+        var error: Unmanaged<CFError>?
+        guard let result = body(&error) else {
+            guard let cfError = error?.takeRetainedValue() else { throw failure }
+            throw Keystore.Error(
+                cryptoFailureDomain: CFErrorGetDomain(cfError) as String,
+                code: CFErrorGetCode(cfError),
+                fallback: failure
+            )
+        }
+        return result as Data
     }
 
     static func storeKey(using query: CFDictionary, with performer: any KeychainPerforming) throws {
@@ -34,7 +50,10 @@ extension Keystore.Operation {
 
         try Keystore.Error(from: status).throwIfExist()
 
-        return (item as! SecKey)
+        guard let item, CFGetTypeID(item) == SecKeyGetTypeID() else {
+            throw Keystore.Error.keychainError(.itemNotFound)
+        }
+        return item as! SecKey
     }
 
     static func createKeyFromData(_ data: Data, using query: CFDictionary) throws -> SecKey {
