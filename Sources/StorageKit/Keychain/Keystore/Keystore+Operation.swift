@@ -29,8 +29,12 @@ extension Keystore.Operation {
     ) throws -> Data {
         var error: Unmanaged<CFError>?
         guard let result = body(&error) else {
-            let code = error.map { CFErrorGetCode($0.takeRetainedValue()) }
-            throw code.map { Keystore.Error(cryptoFailureCode: $0, fallback: failure) } ?? failure
+            guard let cfError = error?.takeRetainedValue() else { throw failure }
+            throw Keystore.Error(
+                cryptoFailureDomain: CFErrorGetDomain(cfError) as String,
+                code: CFErrorGetCode(cfError),
+                fallback: failure
+            )
         }
         return result as Data
     }

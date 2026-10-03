@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import LocalAuthentication
 
 public extension Keystore {
     enum Error: Swift.Error, Equatable{
@@ -30,14 +31,22 @@ public extension Keystore {
 }
 
 extension Keystore.Error {
-    /// Maps the code of a failed SecKey encrypt, decrypt or sign call. Only a
-    /// user cancel and a failed authentication keep their keychain meaning.
-    /// Every other code becomes `fallback`.
-    init(cryptoFailureCode code: Int, fallback: Keystore.Error) {
-        switch Keychain.Error(from: OSStatus(truncatingIfNeeded: code)) {
-        case .userCancelOperation?: self = .keychainError(.userCancelOperation)
-        case .authenticationFailure?: self = .keychainError(.authenticationFailure)
-        default: self = fallback
+    /// Maps a failed SecKey encrypt, decrypt or sign call. Only a cancel and a
+    /// failed authentication keep their meaning. Every other error becomes
+    /// `fallback`. A Secure Enclave key reports these in the LocalAuthentication
+    /// domain, other keys as an OSStatus.
+    init(cryptoFailureDomain domain: String, code: Int, fallback: Keystore.Error) {
+        switch (domain, code) {
+        case (LAErrorDomain, LAError.userCancel.rawValue),
+             (LAErrorDomain, LAError.systemCancel.rawValue),
+             (LAErrorDomain, LAError.appCancel.rawValue),
+             (NSOSStatusErrorDomain, Int(errSecUserCanceled)):
+            self = .keychainError(.userCancelOperation)
+        case (LAErrorDomain, LAError.authenticationFailed.rawValue),
+             (NSOSStatusErrorDomain, Int(errSecAuthFailed)):
+            self = .keychainError(.authenticationFailure)
+        default:
+            self = fallback
         }
     }
 }

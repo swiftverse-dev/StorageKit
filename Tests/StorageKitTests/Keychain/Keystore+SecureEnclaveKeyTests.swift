@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import LocalAuthentication
 import Testing
 @testable import StorageKit
 
@@ -71,12 +72,29 @@ struct KeystoreSecureEnclaveKeyTests {
     }
 
     @Test func `a crypto failure keeps only cancel and authentication codes`() {
-        #expect(Keystore.Error(cryptoFailureCode: Int(errSecUserCanceled), fallback: .signingError)
+        let status = NSOSStatusErrorDomain
+        #expect(Keystore.Error(cryptoFailureDomain: status, code: Int(errSecUserCanceled), fallback: .signingError)
                 == .keychainError(.userCancelOperation))
-        #expect(Keystore.Error(cryptoFailureCode: Int(errSecAuthFailed), fallback: .signingError)
+        #expect(Keystore.Error(cryptoFailureDomain: status, code: Int(errSecAuthFailed), fallback: .signingError)
                 == .keychainError(.authenticationFailure))
-        #expect(Keystore.Error(cryptoFailureCode: Int(errSecParam), fallback: .signingError)
+        #expect(Keystore.Error(cryptoFailureDomain: status, code: Int(errSecParam), fallback: .signingError)
                 == .signingError)
+    }
+
+    // A real device reports a Face ID cancel on decrypt and sign as
+    // com.apple.LocalAuthentication -2, not as errSecUserCanceled.
+    @Test func `a LocalAuthentication cancel or failure keeps its meaning`() {
+        let la = LAErrorDomain
+        #expect(Keystore.Error(cryptoFailureDomain: la, code: LAError.userCancel.rawValue, fallback: .decryptionError)
+                == .keychainError(.userCancelOperation))
+        #expect(Keystore.Error(cryptoFailureDomain: la, code: LAError.systemCancel.rawValue, fallback: .decryptionError)
+                == .keychainError(.userCancelOperation))
+        #expect(Keystore.Error(cryptoFailureDomain: la, code: LAError.appCancel.rawValue, fallback: .decryptionError)
+                == .keychainError(.userCancelOperation))
+        #expect(Keystore.Error(cryptoFailureDomain: la, code: LAError.authenticationFailed.rawValue, fallback: .decryptionError)
+                == .keychainError(.authenticationFailure))
+        #expect(Keystore.Error(cryptoFailureDomain: la, code: LAError.biometryLockout.rawValue, fallback: .decryptionError)
+                == .decryptionError)
     }
 }
 
