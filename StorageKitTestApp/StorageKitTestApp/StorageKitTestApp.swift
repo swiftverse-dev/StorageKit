@@ -12,9 +12,7 @@ import StorageKit
 struct StorageKitTestApp: App {
     var body: some Scene {
         WindowGroup {
-            Button("Authenticate") {
-                try! test()
-            }
+            ContentView()
         }
     }
     
