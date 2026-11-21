@@ -20,8 +20,25 @@ contain breaking changes.
   `Keystore.SecureEnclaveVault.isAvailable` is `false` on hardware without a
   Secure Enclave.
 - `Keystore.secureEnclave` and `Keystore.defaultSecureEnclaveStoreId`.
+- `Keychain.Error` cases `biometryNotEnrolled`, `biometryLockout`,
+  `interactionNotAllowed` and `missingEntitlement`. The policy pre-check maps
+  the `LAError` from `canEvaluatePolicy` to the matching case.
 
 ### Changed
+- **`KeychainBiometricStorage` derives its policy from `accessControl`.** The
+  `policy` parameter is now `LAPolicy?` defaulting to `nil`, which picks
+  `.deviceOwnerAuthenticationWithBiometrics` for `.currentBiometry` and
+  `.anyBiometry`, `.deviceOwnerAuthentication` otherwise. Previously the
+  biometric cases were pre-checked against passcode authentication.
+- **`errSecInteractionNotAllowed` maps to `.interactionNotAllowed`**, not
+  `.passcodeDisabled`: it means the device is locked or UI is not allowed.
+- `KeychainStorage.save` builds and pre-checks the new item before deleting
+  the old one, so a failed pre-check no longer loses the stored item.
+- Retrieve queries no longer include `kSecAttrAccessControl`, an item
+  attribute rather than a search criterion. The policy pre-check and the
+  authentication context are still applied.
+- Creating a `SecAccessControl` that the system rejects throws
+  `.unexpectedFailure` instead of storing an item without access control.
 - **iOS deployment target raised from 12.0 to 13.0.** Required to enable
   `kSecUseDataProtectionKeychain`, which is the supported keychain on macOS.
 - **`KeychainStorage` is now locked to `kSecClassGenericPassword`.** The
