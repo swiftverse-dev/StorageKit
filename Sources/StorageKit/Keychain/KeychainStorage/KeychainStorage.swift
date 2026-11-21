@@ -61,9 +61,11 @@ open class KeychainStorage: Keychain, Storage, @unchecked Sendable {
 
 // MARK: Save Operations
 extension KeychainStorage {
+    /// Replaces the item stored under `tag`.
+    ///
+    /// The new item's query, policy pre-check included, is built before the old
+    /// item is deleted, so a failing pre-check leaves the old item in place.
     public func save(_ data: Data, withTag tag: String) throws{
-        deleteItem(withTag: tag)
-
         let query = try Keychain.Query.createQueryForDataStore(
             data,
             tag: tag,
@@ -76,6 +78,7 @@ extension KeychainStorage {
             accessGroup: accessGroup
         )
 
+        deleteItem(withTag: tag)
         try Keychain.Operation.addItem(using: query, with: performer)
     }
 
