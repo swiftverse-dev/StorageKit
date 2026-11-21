@@ -4,7 +4,7 @@
 //
 //  Created by Lorenzo Limoli on 16/12/23.
 //
-//  Manual Secure Enclave check for a real device. Every action writes one line
+//  Manual Secure Enclave and biometric keychain checks for a real device. Every action writes one line
 //  to the log, so you can read the result without the debugger.
 //
 
@@ -61,6 +61,12 @@ struct ContentView: View {
                     Button("6. Delete key", role: .destructive) { run("delete", Self.delete) }
                 }
 
+                Section("Biometric storage (current biometry)") {
+                    Button("A. Save item") { runStorage("save") { try $0.save(Self.message, withTag: Self.tag); return "saved" } }
+                    Button("B. Load item") { runStorage("load") { try $0.loadData(withTag: Self.tag) == Self.message ? "loaded, matches" : "loaded, MISMATCH" } }
+                    Button("C. Delete item", role: .destructive) { runStorage("delete") { $0.deleteItem(withTag: Self.tag) ? "deleted" : "nothing to delete" } }
+                }
+
                 Section("Log") {
                     ForEach(Array(log.enumerated().reversed()), id: \.offset) { entry in
                         Text(entry.element).font(.caption.monospaced())
@@ -68,7 +74,7 @@ struct ContentView: View {
                     Button("Clear log") { log.removeAll() }
                 }
             }
-            .navigationTitle("Secure Enclave lab")
+            .navigationTitle("Keychain lab")
         }
     }
 }
@@ -133,6 +139,27 @@ private extension ContentView {
         Task.detached {
             let line: String
             do { line = "\(label) \(try action(vault))" }
+            catch { line = "\(label) ERROR \(error)" }
+            await MainActor.run { log.append(line) }
+        }
+    }
+}
+
+// Checks on a real device that items with a biometric access control load
+// back, and that re-enrolling biometry invalidates them (load after A, then
+// add a fingerprint/face in Settings, then load again: expect itemNotFound).
+private extension ContentView {
+    nonisolated static let biometricStorage = KeychainBiometricStorage(
+        storeId: "lab.biometric.storage",
+        accessControl: .currentBiometry,
+        promptMessage: "Unlock the StorageKit test item"
+    )
+
+    func runStorage(_ name: String, _ action: @escaping @Sendable (KeychainBiometricStorage) throws -> String) {
+        let label = "[biometric storage] \(name):"
+        Task.detached {
+            let line: String
+            do { line = "\(label) \(try action(Self.biometricStorage))" }
             catch { line = "\(label) ERROR \(error)" }
             await MainActor.run { log.append(line) }
         }
