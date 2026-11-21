@@ -42,7 +42,8 @@ final class KeychainErrorTests: LeakTrackingTestCase {
         #expect(Keychain.Error(from: errSecUserCanceled) == .userCancelOperation)
         #expect(Keychain.Error(from: errSecNotAvailable) == .storeNotAvailable)
         #expect(Keychain.Error(from: errSecItemNotFound) == .itemNotFound)
-        #expect(Keychain.Error(from: errSecInteractionNotAllowed) == .passcodeDisabled)
+        #expect(Keychain.Error(from: errSecInteractionNotAllowed) == .interactionNotAllowed)
+        #expect(Keychain.Error(from: errSecMissingEntitlement) == .missingEntitlement)
         #expect(Keychain.Error(from: errSecDecode) == .decodeFailure)
         #expect(Keychain.Error(from: errSecAuthFailed) == .authenticationFailure)
     }

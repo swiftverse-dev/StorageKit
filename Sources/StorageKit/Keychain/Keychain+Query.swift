@@ -79,8 +79,7 @@ extension Keychain.Query {
         if let promptMessage {
             // macOS replacement for the deprecated `kSecUseOperationPrompt`:
             // pass the prompt via `LAContext.localizedReason`. The LAContext
-            // itself is written into `kSecUseAuthenticationContext` later by
-            // `addAccessControl`.
+            // itself is written into `kSecUseAuthenticationContext` below.
             context.localizedReason = promptMessage
         }
         #endif
@@ -94,13 +93,11 @@ extension Keychain.Query {
             query[kSecAttrAccessGroup as String] = accessGroup
         }
 
-        try addAccessControl(
-            to: &query,
-            context: context,
-            protection: protection,
-            accessControlFlags: accessControlFlags,
-            policy: policy
-        )
+        // Access control is an attribute of the stored item, not a search
+        // criterion: matching on it can miss items. Only the policy pre-check
+        // and the authentication context belong in a lookup.
+        try ensureCanEvaluate(policy, context: context)
+        query[kSecUseAuthenticationContext as String] = context
         
         return query as CFDictionary
     }
@@ -152,21 +149,19 @@ extension Keychain.Query{
         protection: Keychain.Protection,
         accessControlFlags: SecAccessControlCreateFlags,
         policy: LAPolicy?
-    ) throws -> SecAccessControl? {
+    ) throws -> SecAccessControl {
         try ensureCanEvaluate(policy, context: context)
-        return SecAccessControlCreateWithFlags(nil, protection.type, accessControlFlags, nil)
+        guard let accessControl = SecAccessControlCreateWithFlags(nil, protection.type, accessControlFlags, nil) else {
+            throw Keychain.Error.unexpectedFailure
+        }
+        return accessControl
     }
 
     static func ensureCanEvaluate(_ policy: LAPolicy?, context: any LAContextProviding) throws {
-        guard context.canEvaluatePolicy(policy) else {
-            throw policy == .deviceOwnerAuthentication ? Keychain.Error.passcodeDisabled : .biometryDisabled
+        guard let policy else { return }
+        var error: NSError?
+        guard context.canEvaluatePolicy(policy, error: &error) else {
+            throw Keychain.Error(evaluating: policy, failure: error)
         }
-    }
-}
-
-private extension LAContextProviding {
-    func canEvaluatePolicy(_ policy: LAPolicy?) -> Bool {
-        guard let policy else { return true }
-        return canEvaluatePolicy(policy, error: nil)
     }
 }
